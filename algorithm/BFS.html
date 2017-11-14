@@ -12,18 +12,42 @@
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>  
     <script type="text/javascript">
 		//生成画布        
-        var width = 800;
-        var height = 800;
+        var width = 1000;
+        var height = 1000;
         var svg = d3.select("body").append("svg")
             .attr("width",width)
             .attr("height",height);
-		const node_num = 4;
+		const node_num = 10;
 		//邻接矩阵
-		var adj = [[0,1,1,1],
-				   [1,0,1,0],
-				   [1,1,0,0],
-				   [1,0,0,0]];
-		var coordinate = [{'cx':110,'cy':120},{'cx':350,'cy':120},{'cx':110,'cy':370},{'cx':350,'cy':370}];
+		var adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0],
+				   [8, 0, 9, 6, 7, 0, 0, 0, 0, 0],
+				   [0, 9, 0, 5, 0, 0, 0, 0, 0, 6],
+				   [0, 6, 5, 0, 9, 5, 0, 0, 0, 0],
+				   [6, 7, 0, 9, 0, 0, 4, 0, 0, 0],
+				   [0, 0, 0, 5, 0, 0, 3, 0, 3, 8],
+				   [0, 0, 0, 0, 4, 3, 0, 6, 9, 0],
+				   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0],
+				   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8],
+				   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0]];
+
+		var x1 = 200;
+		var x2 = 400;
+		var x3 = 500;
+		var x4 = 600;
+		var x5 = 800;
+
+		var y1 = 200;
+		var y2 = 300;
+		var y3 = 400;
+		var y4 = 500;
+		var y5 = 600;
+
+		var r = 20;
+		var r2 = 25;
+
+		var coordinate = [{'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
+							{'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
+							{'cx':x4,'cy':y1},{'cx':x5,'cy':y3}];
 		
 		//每个点处在的线
 		var node_lines = new Array(adj.length);
@@ -45,7 +69,15 @@
 					//将线放到index和j节点的数组下
 					node_lines[index].push(line);
 					node_lines[j].push(line);
+
+					svg.append("text")
+					.attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
+					.attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
+					.text(adj[index][j])
+					.attr("fill","black");
 				}
+				//显示边的权重
+				
 			}
 			
 			//绘制点
@@ -57,7 +89,7 @@
 						.transition()
 						.duration(300)
 						.attr("opacity",1)
-						.attr("r",9);
+						.attr("r",r2);
 					//改变文字的颜色
 					d3.select(this)
 						.select("text")
@@ -78,7 +110,7 @@
 						.transition()
 						.duration(300)
 						.attr("opacity",.9)
-						.attr("r",8);
+						.attr("r",r);
 					//改变文字的颜色
 					d3.select(this)
 						.select("text")
@@ -103,7 +135,7 @@
 			g.append("circle")
 				.attr("cx", element.cx)
 				.attr("cy", element.cy)
-				.attr("r",8)
+				.attr("r",r)
 				.attr("fill","black")
 				.attr("opacity",.9);
 			//绘制文字“node1”
@@ -121,8 +153,8 @@
 				index : 开始的点
 			*/
 			
-			var color = [0,0,0,0];	//0白色,1灰色,2黑色
-			var d = [4,4,4,4];		//深度,(让动画产生和层次相应的delay)
+			var color = [0,0,0,0,0,0,0,0,0,0];	//0白色,1灰色,2黑色
+			var d = [10,10,10,10,10,10,10,10,10,10];		//深度,(让动画产生和层次相应的delay)
 			var queue = [];			//保存灰色的点
 			
 			//init paramaters
@@ -163,8 +195,8 @@
 				index : 开始的点
 			*/
 			
-			var color = [0,0,0,0];//0白色,1灰色,2黑色
-			var d = [4,4,4,4];    //遍历的次序
+			var color = [0,0,0,0,0,0,0,0,0,0];	//0白色,1灰色,2黑色
+			var d = [10,10,10,10,10,10,10,10,10,10];		//深度,(让动画产生和层次相应的delay)
 			var time = 0;         //当前次序
 			
 			(function Dfs_visit(s){
