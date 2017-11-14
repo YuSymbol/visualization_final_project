@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+	
+<head>
+    <meta charset="UTF-8">
+    <meta name="Keywords" content="关键词，关键字">
+    <meta name="Description" content="描述信息">
+    <title>BFS&DFS</title>
+</head>
+<body>
+    <!-- 引入D3 -->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>  
+    <script type="text/javascript">
+		//生成画布        
+        var width = 800;
+        var height = 800;
+        var svg = d3.select("body").append("svg")
+            .attr("width",width)
+            .attr("height",height);
+		const node_num = 4;
+		//邻接矩阵
+		var adj = [[0,1,1,1],
+				   [1,0,1,0],
+				   [1,1,0,0],
+				   [1,0,0,0]];
+		var coordinate = [{'cx':110,'cy':120},{'cx':350,'cy':120},{'cx':110,'cy':370},{'cx':350,'cy':370}];
+		
+		//每个点处在的线
+		var node_lines = new Array(adj.length);
+		for(var i=0;i<node_lines.length;i++){
+			node_lines[i]=[];
+		}
+		coordinate.forEach(function(element,index,array){
+			var index = index;
+			//绘制线
+			for(var j = index+1;j<node_lines.length;j++){
+				if(adj[index][j]){
+					var line = svg.append("line")
+						.attr("x1",coordinate[index].cx)
+						.attr("x2",coordinate[j].cx)
+						.attr("y1",coordinate[index].cy)
+						.attr("y2",coordinate[j].cy)
+						.attr("stroke","blue")
+						.attr("stroke-width","1.5");
+					//将线放到index和j节点的数组下
+					node_lines[index].push(line);
+					node_lines[j].push(line);
+				}
+			}
+			
+			//绘制点
+			var g = svg.append("g")
+				.on("mouseover",function(){
+					//改变点的大小
+					d3.select(this)
+						.select("circle")
+						.transition()
+						.duration(300)
+						.attr("opacity",1)
+						.attr("r",9);
+					//改变文字的颜色
+					d3.select(this)
+						.select("text")
+						.transition()
+						.duration(300)
+						.attr("opacity",1);
+					//改变点连接到的线的粗细
+					node_lines[index].forEach(function(element,index,array){
+						element.transition()
+						.duration(300)
+						.attr("stroke-width","4");
+					});
+				})
+				.on("mouseout",function(){
+					//恢复点的颜色
+					d3.select(this)
+						.select("circle")
+						.transition()
+						.duration(300)
+						.attr("opacity",.9)
+						.attr("r",8);
+					//改变文字的颜色
+					d3.select(this)
+						.select("text")
+						.transition()
+						.duration(300)
+						.attr("opacity",.9);
+					//恢复线的粗细
+					node_lines[index].forEach(function(element,index,array){
+						element.transition()
+						.duration(300)
+						.attr("stroke-width","1.5");
+					});
+				})
+				.on("click",function(){
+					BFS(index);
+					//DFS(index);
+				});
+			//绘制圆
+			g.append("circle")
+				.attr("cx", element.cx)
+				.attr("cy", element.cy)
+				.attr("r",8)
+				.attr("fill","black")
+				.attr("opacity",.9);
+			//绘制文字“node1”
+			g.append("text")
+				.attr("x", element.cx+10)
+				.attr("y", element.cy-10)
+				.text("node"+(index+1))
+				.attr("fill","black")
+				.attr("opacity",.9);
+		});
+		
+		//执行广度优先遍历
+		function BFS(index){
+			/*
+				index : 开始的点
+			*/
+			
+			var color = [0,0,0,0];	//0白色,1灰色,2黑色
+			var d = [4,4,4,4];		//深度,(让动画产生和层次相应的delay)
+			var queue = [];			//保存灰色的点
+			
+			//init paramaters
+			queue.push(index);
+			d[index] = 0;
+
+			while(queue.length !=0){
+				var u = queue.shift();
+				for(var i =0;i< node_num;i++){
+					if(adj[u][i]!=0 && color[i]==0 && i!=u){
+							color[i] = 1;
+							d[i] = d[u]+1
+							queue.push(i);
+					}
+				}
+				color[u] =2;
+			}
+			//根据深度，delay，改变颜色
+			d3.selectAll("circle")[0].forEach(function(element,ii,array){
+					var c = "black";
+					if(color[ii]==1){
+						c = "gray";
+					}else if(color[ii] == 2){
+						c = "red";
+					}
+					
+					d3.select(element)
+						.transition()
+						.delay(d[ii]*1500)
+						.duration(300)
+						.attr("fill",c);
+				});
+		}
+		//执行广度优先遍历
+		function D		
+			/*
+				index : 开始的点
+			*/
+			var color = [0,0,0,0];//0白色,1灰色,2黑色
+			var d = [4,4,4,4];//深度
+			var time = 0;
+			(function Dfs_visit(s){
+				color[s] = 1;
+				time ++;
+				d[s] = time;
+				for(var i =0;i< node_num;i++){
+					if(adj[s][i]!=0 && color[i]==0){
+						Dfs_visit(i);							
+					}
+				}
+				color[s] =2;
+			})(index);
+
+			//根据深度，delay，改变颜色
+			d3.selectAll("circle")[0].forEach(function(element,ii,array){
+
+					var c = "black";
+					if(color[ii]==1){
+						c = "gray";
+					}else if(color[ii] == 2){
+						c = "red";
+					}
+					
+					d3.select(element)
+						.transition()
+						.delay((d[ii]-1)*1000)
+						.duration(300)
+						.attr("fill",c);
+				});
+		}
+	</script>
+</body>
