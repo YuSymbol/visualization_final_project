@@ -95,6 +95,9 @@
 				.on("click",function(){
 					BFS(index);
 					//DFS(index);
+				})
+				.on("dblclick",function(){
+					DFS(index);
 				});
 			//绘制圆
 			g.append("circle")
@@ -124,7 +127,7 @@
 			
 			//init paramaters
 			queue.push(index);
-			d[index] = 0;
+			d[index] = 1;
 
 			while(queue.length !=0){
 				var u = queue.shift();
@@ -137,6 +140,7 @@
 				}
 				color[u] =2;
 			}
+			console.log(d)
 			//根据深度，delay，改变颜色
 			d3.selectAll("circle")[0].forEach(function(element,ii,array){
 					var c = "black";
@@ -148,19 +152,21 @@
 					
 					d3.select(element)
 						.transition()
-						.delay(d[ii]*1500)
+						.delay((d[ii]-1)*2000)
 						.duration(300)
 						.attr("fill",c);
 				});
 		}
-		//执行广度优先遍历
-		function D		
+		//执行深度优先遍历
+		function DFS(index){	
 			/*
 				index : 开始的点
 			*/
+			
 			var color = [0,0,0,0];//0白色,1灰色,2黑色
-			var d = [4,4,4,4];//深度
-			var time = 0;
+			var d = [4,4,4,4];    //遍历的次序
+			var time = 0;         //当前次序
+			
 			(function Dfs_visit(s){
 				color[s] = 1;
 				time ++;
