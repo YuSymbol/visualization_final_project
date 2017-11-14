@@ -45,10 +45,19 @@
 		var r = 20;
 		var r2 = 25;
 
+		var circleStrokeWidth = 3.0;
+		var circleStroke = "red";
+		var circleFill = "royalblue";
+
+		var circleTextXof = -2;
+		var circleTextYof = 2;
+
 		var coordinate = [{'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
 							{'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
 							{'cx':x4,'cy':y1},{'cx':x5,'cy':y3}];
 		
+		var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "t"];
+
 		//每个点处在的线
 		var node_lines = new Array(adj.length);
 		for(var i=0;i<node_lines.length;i++){
@@ -69,6 +78,7 @@
 					//将线放到index和j节点的数组下
 					node_lines[index].push(line);
 					node_lines[j].push(line);
+
 
 					svg.append("text")
 					.attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
@@ -136,13 +146,15 @@
 				.attr("cx", element.cx)
 				.attr("cy", element.cy)
 				.attr("r",r)
-				.attr("fill","black")
-				.attr("opacity",.9);
+				.attr("fill",circleFill)
+				.attr("opacity",.9)
+				.attr("stroke",circleStroke)
+				.attr("stroke-width",circleStrokeWidth);
 			//绘制文字“node1”
 			g.append("text")
-				.attr("x", element.cx+10)
-				.attr("y", element.cy-10)
-				.text("node"+(index+1))
+				.attr("x", element.cx+circleTextXof)
+				.attr("y", element.cy+circleTextYof)
+				.text(nodeName[index])
 				.attr("fill","black")
 				.attr("opacity",.9);
 		});
