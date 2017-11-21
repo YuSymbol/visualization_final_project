@@ -6,6 +6,11 @@
     <meta name="Keywords" content="关键词，关键字">
     <meta name="Description" content="描述信息">
     <title>BFS&DFS</title>
+	<style>
+		g:hover{
+			cursor:pointer;
+		}
+	</style>
 </head>
 <body>
     <!-- 引入D3 -->
@@ -13,7 +18,7 @@
     <script type="text/javascript">
 		//生成画布        
         var width = 1000;
-        var height = 1000;
+        var height = 700;
         var svg = d3.select("body").append("svg")
             .attr("width",width)
             .attr("height",height);
@@ -49,9 +54,15 @@
 		var circleStroke = "red";
 		var circleFill = "royalblue";
 
-		var circleTextXof = -2;
-		var circleTextYof = 2;
+		//文字相对圆心的偏离位置
+		var circleTextXof = -5;
+		var circleTextYof = 8;
 
+		//点之间连线的颜色
+		var line_color  = "blue";
+		var line_color_gone = "black";
+		
+		//点的坐标（圆心坐标）
 		var coordinate = [{'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
 							{'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
 							{'cx':x4,'cy':y1},{'cx':x5,'cy':y3}];
@@ -79,18 +90,16 @@
 					node_lines[index].push(line);
 					node_lines[j].push(line);
 
-
+					//显示边的权重
 					svg.append("text")
-					.attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
-					.attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
-					.text(adj[index][j])
-					.attr("fill","black");
+						.attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
+						.attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
+						.text(adj[index][j])
+						.attr("fill","black");
 				}
-				//显示边的权重
-				
 			}
 			
-			//绘制点
+			//设置点的事件（划上、划出、点击、双击）
 			var g = svg.append("g")
 				.on("mouseover",function(){
 					//改变点的大小
@@ -100,12 +109,12 @@
 						.duration(300)
 						.attr("opacity",1)
 						.attr("r",r2);
-					//改变文字的颜色
+					//改变文字"A"、"B"的大小
 					d3.select(this)
 						.select("text")
 						.transition()
-						.duration(300)
-						.attr("opacity",1);
+						.duration(300)	
+						.attr("font-size",25);
 					//改变点连接到的线的粗细
 					node_lines[index].forEach(function(element,index,array){
 						element.transition()
@@ -121,12 +130,12 @@
 						.duration(300)
 						.attr("opacity",.9)
 						.attr("r",r);
-					//改变文字的颜色
+					//恢复文字的大小
 					d3.select(this)
 						.select("text")
 						.transition()
 						.duration(300)
-						.attr("opacity",.9);
+						.attr("font-size",20);
 					//恢复线的粗细
 					node_lines[index].forEach(function(element,index,array){
 						element.transition()
@@ -141,6 +150,7 @@
 				.on("dblclick",function(){
 					DFS(index);
 				});
+			
 			//绘制圆
 			g.append("circle")
 				.attr("cx", element.cx)
@@ -150,13 +160,15 @@
 				.attr("opacity",.9)
 				.attr("stroke",circleStroke)
 				.attr("stroke-width",circleStrokeWidth);
-			//绘制文字“node1”
+				
+			//绘制圆上的文字 A、B
 			g.append("text")
 				.attr("x", element.cx+circleTextXof)
 				.attr("y", element.cy+circleTextYof)
 				.text(nodeName[index])
 				.attr("fill","black")
-				.attr("opacity",.9);
+				.attr("opacity",.9)
+				.attr("font-size",20);
 		});
 		
 		//执行广度优先遍历
@@ -184,7 +196,7 @@
 				}
 				color[u] =2;
 			}
-			console.log(d)
+			
 			//根据深度，delay，改变颜色
 			d3.selectAll("circle")[0].forEach(function(element,ii,array){
 					var c = "black";
