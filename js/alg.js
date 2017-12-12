@@ -172,6 +172,59 @@ function onClick(index){
 	}
 }
 
+
+function prim(index){
+			var nodes = [];
+			var edges = [];
+			var lowcost=[];
+			var mid =[];
+
+			for(var i=0;i<node_num;i++){
+				lowcost[i]=adj2[index][i];	//	各个点距离初始点的距离
+				mid[i]=index;
+			}
+			console.log(lowcost)	
+
+			var min;
+			var minid;
+			var sum=0;
+
+			nodes.push(index);	//	加入的节点顺序
+			console.log(nodes);
+			for(var i=1;i<node_num;i++){
+				min = 100;
+				minid=-1;
+				for(var j=0;j<node_num;j++){
+					if(lowcost[j]!=0&&lowcost[j]<min){
+						min = lowcost[j];
+						minid=j;
+					}
+				}
+				if(minid==-1){
+					console.log(i+"fail");
+					console.log(nodes);
+					return;
+				} 
+
+				nodes.push(minid);	//	把找到的这个点放入nodes数组
+				lowcost[minid]=0;
+				sum=sum+min;	//	总权重
+				console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
+				for(var j=0;j<node_num;j++){
+					if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
+						lowcost[j]=adj2[minid][j];
+						mid[j]=minid;
+					}
+				}
+			}
+			console.log(nodes);
+			console.log(mid);
+			for(var i=0;i<node_num;i++){
+				console.log(nodeName[mid[i]]+" "+nodeName[i])
+			}
+			
+		}
+
 //执行广度优先遍历
 function BFS(index){
 	/*
