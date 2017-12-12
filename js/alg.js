@@ -143,12 +143,14 @@ coordinate.forEach(function(element,index,array){
 				.duration(300)	
 				.attr("font-size",25);
 			//改变点连接到的线的粗细
+            /*
 			node_lines[index].forEach(function(element,index,array){
 				element.transition()
 				.duration(300)
 				.attr("stroke-width",line_width_hover)
 				.attr("opacity",line_opacity_hover);
 			});
+            */
 		})
 		.on("mouseout",function(){
 			//恢复点的颜色
@@ -164,6 +166,7 @@ coordinate.forEach(function(element,index,array){
 				.transition()
 				.duration(300)
 				.attr("font-size",20);
+            /*
 			//恢复线的粗细
 			node_lines[index].forEach(function(element,index,array){
 				element.transition()
@@ -171,6 +174,7 @@ coordinate.forEach(function(element,index,array){
 				.attr("stroke-width",line_width)
 				.attr("opacity",line_opacity);
 			});
+            */
 		})
 		.on("click",function (){onClick(index)});
 	
@@ -383,7 +387,11 @@ function DFS(index){
 		});
 }
 
-
+var node_color_end = "green";
+//var node_color = circleFill;
+//var line_color = 
+var line_visited = "red";
+var line_gone = "black";
 function dijstra(index){  
     //min dist
     var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
@@ -395,11 +403,6 @@ function dijstra(index){
             p[i] = index;
         }
     }
-    console.log(d3.selectAll("circle")[0])
-    console.log(d3.selectAll("circle")[0][index])
-    
-    changeLineColor(0,1,'green',100,1000);
-    changeCircleColor(index,"green",100,1000);
     d[index] = 0;
     
     for(var i=0;i<node_num;i++){     
@@ -408,42 +411,65 @@ function dijstra(index){
         }
     }
     
-    
-    var S = [index];
+    var S = [];
     var Q = [0,1,2,3,4,5,6,7,8,9];
-    Q.removeByValue(index);
+
+    var delay = 0;
+    var delay_interupt  = 300;
+    
 
     while(Q.length !=0){
+    
         /** min dequeue **/
         var minIndex = Q[0]; 
-        var i = 0;
-        for( ; i < node_num ; i++ ){
-            //element in Q  and cording dist is min          
-            if(Q.contains(i) && d[i] < d[minIndex]){
+        for(var i of Q ){//element in Q
+            // dist is min          
+            if(d[i] < d[minIndex]){
                 minIndex = i;
             }
         }
         Q.removeByValue(minIndex);
-        console.log(minIndex);
+        
+        
+        //////////////////// 
+        changeCircleColor(minIndex,node_color_end,delay,100);
+        delay = delay + delay_interupt;
         
         if(S.length==node_num){// end 
-            return 
+            return ;
         }
         
         /** set-or **/
         S = S.unique(S.push(minIndex));
+        if(S.length>1){
+            var lastElement = S[S.length-1];
+            console.log(lastElement);
+            changeLineColor(lastElement,p[lastElement],line_color_gone,delay-delay_interupt,100);
+            delay = delay + delay_interupt; 
+    
+        }
         
         /** for each v in adj[u] **/
         for(i=0 ; i<node_num ; i++){
-            if(adj[minIndex][i]!=0){//i is in adj
+            if(adj[minIndex][i]!=0 && Q.contains(i)){//i is in adj and  not visit
+            
+                //////////////////////////  判断当前点  ///////////////////////////////
+                
+                changeLineColor(minIndex,i,"green",delay,100);
+                delay = delay + delay_interupt;
+                
                 //relax
                 if(d[i]>d[minIndex]+adj[i][minIndex]){
                     d[i] = d[minIndex] + adj[i][minIndex];
                     p[i] = minIndex; 
-                    
                 }
+                changeLineColor(minIndex,i,line_visited,delay,100);
+                delay = delay + delay_interupt;
             }
         }
+        
+        
+        
     }
     console.log(d);
     console.log(p);
@@ -514,6 +540,10 @@ function dijstra1(index){
     Q.removeByValue(index);
 
     while(Q.length !=0){
+        
+        console.log(S);
+        
+        
         /** min dequeue **/
         var minIndex = Q[0]; 
         var i = 0;
