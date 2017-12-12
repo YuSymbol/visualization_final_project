@@ -392,6 +392,7 @@ function prim(index){
 
     nodes.push(index);	//	加入的节点顺序
     console.log(nodes);
+    changeCircleColor(index, "red", 0, 500);
     for(var i=1;i<node_num;i++){
         min = 100;
         minid=-1;
@@ -411,6 +412,8 @@ function prim(index){
         lowcost[minid]=0;
         sum=sum+min;	//	总权重
         console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
+        changeCircleColor(minid,"red", 1000*i, 500);
+        changeLineColor(mid[minid], minid, "black", 1000*i, 500);
         for(var j=0;j<node_num;j++){
             if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
                 lowcost[j]=adj2[minid][j];
