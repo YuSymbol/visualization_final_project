@@ -48,6 +48,18 @@ const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0],
 		   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0],
 		   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8],
 		   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0]];
+
+var adj2 = [[0, 8, Infinity, Infinity, 6, Infinity, Infinity, 7, Infinity, Infinity],
+                   [8, 0, 9, 6, 7, Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6],
+                   [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity],
+                   [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8],
+                   [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity],
+                   [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8],
+                   [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0]];
+
 const node_num = 10;
 var x1 = 200;
 var x2 = 400;
