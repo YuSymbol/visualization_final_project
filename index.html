@@ -25,8 +25,7 @@
     </head>
     <body>
         <div id="test2"></div>
-        <input type="hidden" id="selectResult" onpropertychange="javascript:alert('值已改变')></input>
-		<input type="text" id="sele"></input>
+        <input type="hidden" id="selectResult"></input>
 		<div id = "alg_ground"></div>
     </body>
 </html>
@@ -38,7 +37,9 @@
         "inputId":"selectResult",//输入框的id
         "checkStyle":"fx"//选择的样式 fx , fg , yx
     });
-
+    $("#test2").click(function(){
+        init_graph();
+    });
 	
 </script>
 <script src="js/alg.js"></script>

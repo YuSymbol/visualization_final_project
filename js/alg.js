@@ -95,108 +95,113 @@ var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "t"];
 //每个点处在的线
 var node_lines = new Array(adj.length);
 
-for(var i=0;i<node_lines.length;i++){
-	node_lines[i]=[];
+function init_graph(){
+    d3.selectAll("circle").remove();
+    d3.selectAll("line").remove();
+    d3.selectAll("g").remove();
+    d3.selectAll("text").remove();
+    for(var i=0;i<node_lines.length;i++){
+        node_lines[i]=[];
+    }
+    //根据坐标开始绘制
+    coordinate.forEach(function(element,index,array){
+        var index = index;
+        //绘制线
+        for(var j = index+1;j<node_lines.length;j++){
+            if(adj[index][j]){
+                var line = svg.append("line")
+                    .attr("x1",coordinate[index].cx)
+                    .attr("x2",coordinate[j].cx)
+                    .attr("y1",coordinate[index].cy)
+                    .attr("y2",coordinate[j].cy)
+                    .attr("stroke",line_color)
+                    .attr("stroke-width",line_width)
+                    .attr("opacity",line_opacity);
+                //将线放到index和j节点的数组下
+                node_lines[index].push(line);
+                node_lines[j].push(line);
+
+                //显示边的权重
+                svg.append("text")
+                    .attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
+                    .attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
+                    .text(adj[index][j])
+                    .attr("fill","black");
+            }
+        }
+        
+        //设置点的事件（划上、划出、点击、双击）
+        var g = svg.append("g")
+            .on("mouseover",function(){
+                //改变点的大小
+                d3.select(this)
+                    .select("circle")
+                    .transition()
+                    .duration(300)
+                    .attr("opacity",1)
+                    .attr("r",r2);
+                //改变文字"A"、"B"的大小
+                d3.select(this)
+                    .select("text")
+                    .transition()
+                    .duration(300)	
+                    .attr("font-size",25);
+                //改变点连接到的线的粗细
+                /*
+                node_lines[index].forEach(function(element,index,array){
+                    element.transition()
+                    .duration(300)
+                    .attr("stroke-width",line_width_hover)
+                    .attr("opacity",line_opacity_hover);
+                });
+                */
+            })
+            .on("mouseout",function(){
+                //恢复点的颜色
+                d3.select(this)
+                    .select("circle")
+                    .transition()
+                    .duration(300)
+                    .attr("opacity",.9)
+                    .attr("r",r);
+                //恢复文字的大小
+                d3.select(this)
+                    .select("text")
+                    .transition()
+                    .duration(300)
+                    .attr("font-size",20);
+                /*
+                //恢复线的粗细
+                node_lines[index].forEach(function(element,index,array){
+                    element.transition()
+                    .duration(300)
+                    .attr("stroke-width",line_width)
+                    .attr("opacity",line_opacity);
+                });
+                */
+            })
+            .on("click",function (){onClick(index)});
+        
+        //绘制圆
+        g.append("circle")
+            .attr("cx", element.cx)
+            .attr("cy", element.cy)
+            .attr("r",r)
+            .attr("fill",circleFill)
+            .attr("opacity",.9)
+            .attr("stroke",circleStroke)
+            .attr("stroke-width",circleStrokeWidth);
+            
+        //绘制圆上的文字 A、B
+        g.append("text")
+            .attr("x", element.cx+circleTextXof)
+            .attr("y", element.cy+circleTextYof)
+            .text(nodeName[index])
+            .attr("fill","black")
+            .attr("opacity",.9)
+            .attr("font-size",20);
+    });
 }
-
-//根据坐标开始绘制
-coordinate.forEach(function(element,index,array){
-	var index = index;
-	//绘制线
-	for(var j = index+1;j<node_lines.length;j++){
-		if(adj[index][j]){
-			var line = svg.append("line")
-				.attr("x1",coordinate[index].cx)
-				.attr("x2",coordinate[j].cx)
-				.attr("y1",coordinate[index].cy)
-				.attr("y2",coordinate[j].cy)
-				.attr("stroke",line_color)
-				.attr("stroke-width",line_width)
-				.attr("opacity",line_opacity);
-			//将线放到index和j节点的数组下
-			node_lines[index].push(line);
-			node_lines[j].push(line);
-
-			//显示边的权重
-			svg.append("text")
-				.attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
-				.attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
-				.text(adj[index][j])
-				.attr("fill","black");
-		}
-	}
-	
-	//设置点的事件（划上、划出、点击、双击）
-	var g = svg.append("g")
-		.on("mouseover",function(){
-			//改变点的大小
-			d3.select(this)
-				.select("circle")
-				.transition()
-				.duration(300)
-				.attr("opacity",1)
-				.attr("r",r2);
-			//改变文字"A"、"B"的大小
-			d3.select(this)
-				.select("text")
-				.transition()
-				.duration(300)	
-				.attr("font-size",25);
-			//改变点连接到的线的粗细
-            /*
-			node_lines[index].forEach(function(element,index,array){
-				element.transition()
-				.duration(300)
-				.attr("stroke-width",line_width_hover)
-				.attr("opacity",line_opacity_hover);
-			});
-            */
-		})
-		.on("mouseout",function(){
-			//恢复点的颜色
-			d3.select(this)
-				.select("circle")
-				.transition()
-				.duration(300)
-				.attr("opacity",.9)
-				.attr("r",r);
-			//恢复文字的大小
-			d3.select(this)
-				.select("text")
-				.transition()
-				.duration(300)
-				.attr("font-size",20);
-            /*
-			//恢复线的粗细
-			node_lines[index].forEach(function(element,index,array){
-				element.transition()
-				.duration(300)
-				.attr("stroke-width",line_width)
-				.attr("opacity",line_opacity);
-			});
-            */
-		})
-		.on("click",function (){onClick(index)});
-	
-	//绘制圆
-	g.append("circle")
-		.attr("cx", element.cx)
-		.attr("cy", element.cy)
-		.attr("r",r)
-		.attr("fill",circleFill)
-		.attr("opacity",.9)
-		.attr("stroke",circleStroke)
-		.attr("stroke-width",circleStrokeWidth);
-		
-	//绘制圆上的文字 A、B
-	g.append("text")
-		.attr("x", element.cx+circleTextXof)
-		.attr("y", element.cy+circleTextYof)
-		.text(nodeName[index])
-		.attr("fill","black")
-		.attr("opacity",.9)
-		.attr("font-size",20);
-});
 
 function onClick(index){
 	var text = $("#selectResult").val();
@@ -212,56 +217,55 @@ function onClick(index){
 
 
 function prim(index){
-			var nodes = [];
-			var edges = [];
-			var lowcost=[];
-			var mid =[];
+    var nodes = [];
+    var edges = [];
+    var lowcost=[];
+    var mid =[];
 
-			for(var i=0;i<node_num;i++){
-				lowcost[i]=adj2[index][i];	//	各个点距离初始点的距离
-				mid[i]=index;
-			}
-			console.log(lowcost)	
+    for(var i=0;i<node_num;i++){
+        lowcost[i]=adj2[index][i];	//	各个点距离初始点的距离
+        mid[i]=index;
+    }
+    console.log(lowcost)	
 
-			var min;
-			var minid;
-			var sum=0;
+    var min;
+    var minid;
+    var sum=0;
 
-			nodes.push(index);	//	加入的节点顺序
-			console.log(nodes);
-			for(var i=1;i<node_num;i++){
-				min = 100;
-				minid=-1;
-				for(var j=0;j<node_num;j++){
-					if(lowcost[j]!=0&&lowcost[j]<min){
-						min = lowcost[j];
-						minid=j;
-					}
-				}
-				if(minid==-1){
-					console.log(i+"fail");
-					console.log(nodes);
-					return;
-				} 
+    nodes.push(index);	//	加入的节点顺序
+    console.log(nodes);
+    for(var i=1;i<node_num;i++){
+        min = 100;
+        minid=-1;
+        for(var j=0;j<node_num;j++){
+            if(lowcost[j]!=0&&lowcost[j]<min){
+                min = lowcost[j];
+                minid=j;
+            }
+        }
+        if(minid==-1){
+            console.log(i+"fail");
+            console.log(nodes);
+            return;
+        } 
 
-				nodes.push(minid);	//	把找到的这个点放入nodes数组
-				lowcost[minid]=0;
-				sum=sum+min;	//	总权重
-				console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
-				for(var j=0;j<node_num;j++){
-					if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
-						lowcost[j]=adj2[minid][j];
-						mid[j]=minid;
-					}
-				}
-			}
-			console.log(nodes);
-			console.log(mid);
-			for(var i=0;i<node_num;i++){
-				console.log(nodeName[mid[i]]+" "+nodeName[i])
-			}
-			
-		}
+        nodes.push(minid);	//	把找到的这个点放入nodes数组
+        lowcost[minid]=0;
+        sum=sum+min;	//	总权重
+        console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
+        for(var j=0;j<node_num;j++){
+            if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
+                lowcost[j]=adj2[minid][j];
+                mid[j]=minid;
+            }
+        }
+    }
+    console.log(nodes);
+    console.log(mid);
+    for(var i=0;i<node_num;i++){
+        console.log(nodeName[mid[i]]+" "+nodeName[i])
+    }
+}
 
 //执行广度优先遍历
 function BFS(index){
