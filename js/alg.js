@@ -1,3 +1,35 @@
+/****************************** add some function to js **************************/
+Array.prototype.contains = function ( needle ) {
+  for (i in this) {
+    if (this[i] == needle) return true;
+  }
+  return false;
+}
+
+Array.prototype.unique = function(){
+ var res = [];
+ var json = {};
+ for(var i = 0; i < this.length; i++){
+  if(!json[this[i]]){
+   res.push(this[i]);
+   json[this[i]] = 1;
+  }
+ }
+ return res;
+}
+
+Array.prototype.removeByValue = function(val) {
+  for(var i=0; i<this.length; i++) {
+    if(this[i] == val) {
+      this.splice(i, 1);
+      break;
+    }
+  }
+}
+/********************************************************************************/
+
+
+
 //生成画布        
 var width = 900;
 var height = 540;
@@ -169,7 +201,9 @@ function onClick(index){
 		DFS(index);
 	}else if(text ==2){
 		BFS(index);
-	}
+	}else if(text == 8){
+        dijstra(index);
+    }
 }
 
 //执行广度优先遍历
@@ -295,3 +329,171 @@ function DFS(index){
 				
 		});
 }
+
+
+function dijstra(index){  
+    //min dist
+    var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
+    //pre node
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    for(var i = 0;i<node_num;i++){
+        if(adj[index][i]!=0){
+            d[i] = adj[index][i];
+            p[i] = index;
+        }
+    }
+    console.log(d3.selectAll("circle")[0])
+    console.log(d3.selectAll("circle")[0][index])
+    
+    changeLineColor(0,1,'green',100,1000);
+    changeCircleColor(index,"green",100,1000);
+    d[index] = 0;
+    
+    for(var i=0;i<node_num;i++){     
+        if(adj[index][i] != 0){
+            d[i] = adj[index][i]           
+        }
+    }
+    
+    
+    var S = [index];
+    var Q = [0,1,2,3,4,5,6,7,8,9];
+    Q.removeByValue(index);
+
+    while(Q.length !=0){
+        /** min dequeue **/
+        var minIndex = Q[0]; 
+        var i = 0;
+        for( ; i < node_num ; i++ ){
+            //element in Q  and cording dist is min          
+            if(Q.contains(i) && d[i] < d[minIndex]){
+                minIndex = i;
+            }
+        }
+        Q.removeByValue(minIndex);
+        console.log(minIndex);
+        
+        if(S.length==node_num){// end 
+            return 
+        }
+        
+        /** set-or **/
+        S = S.unique(S.push(minIndex));
+        
+        /** for each v in adj[u] **/
+        for(i=0 ; i<node_num ; i++){
+            if(adj[minIndex][i]!=0){//i is in adj
+                //relax
+                if(d[i]>d[minIndex]+adj[i][minIndex]){
+                    d[i] = d[minIndex] + adj[i][minIndex];
+                    p[i] = minIndex; 
+                    
+                }
+            }
+        }
+    }
+    console.log(d);
+    console.log(p);
+}
+
+function changeCircleColor(index,c,delay_,duration_){
+    /**
+    *   index:点的序号
+    *   c:将变成的颜色
+    *   delay_:延迟多少ms后，开始执行
+    *   duration:动画执行的时间
+    **/
+    d3.select(d3.selectAll("circle")[0][index])
+        .transition()
+        .delay(delay_)
+        .duration(duration_)
+        .attr("fill",c);
+}
+
+function changeLineColor(i,j,c,delay_,duration_){
+    /**
+    *   i:一个点的index
+    *   j:另一个点的index
+    *   c:将变成的颜色
+    *   delay_:延迟多少ms后，开始执行
+    *   duration:动画执行的时间
+    **/
+    //点i所在的边 和 点j所在的边 的交集，（唯一），经由这条边到达
+    var i_node_lines = node_lines[i];
+    var j_node_lines = node_lines[j];
+    for(var cur_i of i_node_lines){
+        for(var pare_i of j_node_lines){
+            if(cur_i[0] === pare_i[0]){
+                d3.select(cur_i[0][0])
+                    .transition()
+                    .delay(delay_)
+                    .duration(duration_)
+                    .attr("stroke",c);
+                return;
+            }
+        }
+    }
+}
+
+function dijstra1(index){  
+    //min dist
+    var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
+    //pre node
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    for(var i = 0;i<node_num;i++){
+        if(adj[index][i]!=0){
+            d[i] = adj[index][i];
+            p[i] = index;
+        }
+    }
+    
+    d[index] = 0;
+    
+    for(var i=0;i<node_num;i++){     
+        if(adj[index][i] != 0){
+            d[i] = adj[index][i]           
+        }
+    }
+    
+    
+    var S = [index];
+    var Q = [0,1,2,3,4,5,6,7,8,9];
+    Q.removeByValue(index);
+
+    while(Q.length !=0){
+        /** min dequeue **/
+        var minIndex = Q[0]; 
+        var i = 0;
+        for( ; i < node_num ; i++ ){
+            //element in Q  and cording dist is min          
+            if(Q.contains(i) && d[i] < d[minIndex]){
+                minIndex = i;
+            }
+        }
+        Q.removeByValue(minIndex);
+        console.log(minIndex);
+        
+        if(S.length==node_num){// end 
+            return 
+        }
+        
+        /** set-or **/
+        S = S.unique(S.push(minIndex));
+        
+        /** for each v in adj[u] **/
+        for(i=0 ; i<node_num ; i++){
+            if(adj[minIndex][i]!=0){//i is in adj
+                //relax
+                if(d[i]>d[minIndex]+adj[i][minIndex]){
+                    d[i] = d[minIndex] + adj[i][minIndex];
+                    p[i] = minIndex; 
+                    
+                }
+            }
+        }
+    }
+    console.log(d);
+    console.log(p);
+}
+
+    
