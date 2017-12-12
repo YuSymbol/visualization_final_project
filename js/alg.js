@@ -48,18 +48,6 @@ const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0],
 		   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0],
 		   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8],
 		   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0]];
-
-var adj2 = [[0, 8, Infinity, Infinity, 6, Infinity, Infinity, 7, Infinity, Infinity],
-				   [8, 0, 9, 6, 7, Infinity, Infinity, Infinity, Infinity, Infinity],
-				   [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6],
-				   [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity],
-				   [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity],
-				   [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8],
-				   [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity],
-				   [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity],
-				   [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8],
-				   [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0]];
-
 const node_num = 10;
 var x1 = 200;
 var x2 = 400;
@@ -107,104 +95,113 @@ var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "t"];
 //每个点处在的线
 var node_lines = new Array(adj.length);
 
-for(var i=0;i<node_lines.length;i++){
-	node_lines[i]=[];
+function init_graph(){
+    d3.selectAll("circle").remove();
+    d3.selectAll("line").remove();
+    d3.selectAll("g").remove();
+    d3.selectAll("text").remove();
+    for(var i=0;i<node_lines.length;i++){
+        node_lines[i]=[];
+    }
+    //根据坐标开始绘制
+    coordinate.forEach(function(element,index,array){
+        var index = index;
+        //绘制线
+        for(var j = index+1;j<node_lines.length;j++){
+            if(adj[index][j]){
+                var line = svg.append("line")
+                    .attr("x1",coordinate[index].cx)
+                    .attr("x2",coordinate[j].cx)
+                    .attr("y1",coordinate[index].cy)
+                    .attr("y2",coordinate[j].cy)
+                    .attr("stroke",line_color)
+                    .attr("stroke-width",line_width)
+                    .attr("opacity",line_opacity);
+                //将线放到index和j节点的数组下
+                node_lines[index].push(line);
+                node_lines[j].push(line);
+
+                //显示边的权重
+                svg.append("text")
+                    .attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
+                    .attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
+                    .text(adj[index][j])
+                    .attr("fill","black");
+            }
+        }
+        
+        //设置点的事件（划上、划出、点击、双击）
+        var g = svg.append("g")
+            .on("mouseover",function(){
+                //改变点的大小
+                d3.select(this)
+                    .select("circle")
+                    .transition()
+                    .duration(300)
+                    .attr("opacity",1)
+                    .attr("r",r2);
+                //改变文字"A"、"B"的大小
+                d3.select(this)
+                    .select("text")
+                    .transition()
+                    .duration(300)	
+                    .attr("font-size",25);
+                //改变点连接到的线的粗细
+                /*
+                node_lines[index].forEach(function(element,index,array){
+                    element.transition()
+                    .duration(300)
+                    .attr("stroke-width",line_width_hover)
+                    .attr("opacity",line_opacity_hover);
+                });
+                */
+            })
+            .on("mouseout",function(){
+                //恢复点的颜色
+                d3.select(this)
+                    .select("circle")
+                    .transition()
+                    .duration(300)
+                    .attr("opacity",.9)
+                    .attr("r",r);
+                //恢复文字的大小
+                d3.select(this)
+                    .select("text")
+                    .transition()
+                    .duration(300)
+                    .attr("font-size",20);
+                /*
+                //恢复线的粗细
+                node_lines[index].forEach(function(element,index,array){
+                    element.transition()
+                    .duration(300)
+                    .attr("stroke-width",line_width)
+                    .attr("opacity",line_opacity);
+                });
+                */
+            })
+            .on("click",function (){onClick(index)});
+        
+        //绘制圆
+        g.append("circle")
+            .attr("cx", element.cx)
+            .attr("cy", element.cy)
+            .attr("r",r)
+            .attr("fill",circleFill)
+            .attr("opacity",.9)
+            .attr("stroke",circleStroke)
+            .attr("stroke-width",circleStrokeWidth);
+            
+        //绘制圆上的文字 A、B
+        g.append("text")
+            .attr("x", element.cx+circleTextXof)
+            .attr("y", element.cy+circleTextYof)
+            .text(nodeName[index])
+            .attr("fill","black")
+            .attr("opacity",.9)
+            .attr("font-size",20);
+    });
 }
-
-//根据坐标开始绘制
-coordinate.forEach(function(element,index,array){
-	var index = index;
-	//绘制线
-	for(var j = index+1;j<node_lines.length;j++){
-		if(adj[index][j]){
-			var line = svg.append("line")
-				.attr("x1",coordinate[index].cx)
-				.attr("x2",coordinate[j].cx)
-				.attr("y1",coordinate[index].cy)
-				.attr("y2",coordinate[j].cy)
-				.attr("stroke",line_color)
-				.attr("stroke-width",line_width)
-				.attr("opacity",line_opacity);
-			//将线放到index和j节点的数组下
-			node_lines[index].push(line);
-			node_lines[j].push(line);
-
-			//显示边的权重
-			svg.append("text")
-				.attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
-				.attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
-				.text(adj[index][j])
-				.attr("fill","black");
-		}
-	}
-	
-	//设置点的事件（划上、划出、点击、双击）
-	var g = svg.append("g")
-		.on("mouseover",function(){
-			//改变点的大小
-			d3.select(this)
-				.select("circle")
-				.transition()
-				.duration(300)
-				.attr("opacity",1)
-				.attr("r",r2);
-			//改变文字"A"、"B"的大小
-			d3.select(this)
-				.select("text")
-				.transition()
-				.duration(300)	
-				.attr("font-size",25);
-			//改变点连接到的线的粗细
-			node_lines[index].forEach(function(element,index,array){
-				element.transition()
-				.duration(300)
-				.attr("stroke-width",line_width_hover)
-				.attr("opacity",line_opacity_hover);
-			});
-		})
-		.on("mouseout",function(){
-			//恢复点的颜色
-			d3.select(this)
-				.select("circle")
-				.transition()
-				.duration(300)
-				.attr("opacity",.9)
-				.attr("r",r);
-			//恢复文字的大小
-			d3.select(this)
-				.select("text")
-				.transition()
-				.duration(300)
-				.attr("font-size",20);
-			//恢复线的粗细
-			node_lines[index].forEach(function(element,index,array){
-				element.transition()
-				.duration(300)
-				.attr("stroke-width",line_width)
-				.attr("opacity",line_opacity);
-			});
-		})
-		.on("click",function (){onClick(index)});
-	
-	//绘制圆
-	g.append("circle")
-		.attr("cx", element.cx)
-		.attr("cy", element.cy)
-		.attr("r",r)
-		.attr("fill",circleFill)
-		.attr("opacity",.9)
-		.attr("stroke",circleStroke)
-		.attr("stroke-width",circleStrokeWidth);
-		
-	//绘制圆上的文字 A、B
-	g.append("text")
-		.attr("x", element.cx+circleTextXof)
-		.attr("y", element.cy+circleTextYof)
-		.text(nodeName[index])
-		.attr("fill","black")
-		.attr("opacity",.9)
-		.attr("font-size",20);
-});
 
 function onClick(index){
 	var text = $("#selectResult").val();
@@ -215,213 +212,60 @@ function onClick(index){
 		BFS(index);
 	}else if(text == 8){
         dijstra(index);
-    }else if(text == 5){
-    	prim(index);
-    }else if(text == 4){
-    	kruskal(index);
     }
 }
 
-//	获取边的对象：node1,node2,weight
-		function getE(E){
-			// var E = []
-			for(var i=0;i<node_num;i++){
-
-				for(var j=0;j<node_num;j++){
-					if(adj[i][j]){
-						e={}
-						e.node1=i;
-						e.node2=j;
-						e.weight=adj[i][j];
-						E.push(e);
-						// E.push([i,j,adj[i][j]])
-					}
-				}
-			}
-			
-			// console.log(E);
-		}
-
-		//	获取边的对象，不重复
-		function getE2(E){
-			// var E = []
-			for(var i=0;i<node_num;i++){
-
-				for(var j=i;j<node_num;j++){
-					if(adj[i][j]){
-						e={}
-						e.node1=i;
-						e.node2=j;
-						e.weight=adj[i][j];
-						E.push(e);
-						// E.push([i,j,adj[i][j]])
-					}
-				}
-			}
-			
-			// console.log(E);
-		}
-
-		var by = function(name){	//	对象排序方法
-		 return function(o, p){
-		   var a, b;
-		   if (typeof o === "object" && typeof p === "object" && o && p) {
-		     a = o[name];
-		     b = p[name];
-		     if (a === b) {
-		       return 0;
-		     }
-		     if (typeof a === typeof b) {
-		       return a < b ? -1 : 1;
-		     }
-		     return typeof a < typeof b ? -1 : 1;
-		   }
-		   else {
-		     throw ("error");
-		   }
-		 }
-		}
-		
-		function kruskal(index){
-			var E = [];
-			getE2(E);
-			console.log(E);
-
-			E.sort(by("weight"));	//	获得排序后的行
-
-			var m = node_num;
-			var n = E.length;
-			console.log(n);
-
-			var treelist = [];	//	创建一个Set类型的数组，每个Set表示一棵树，treelist表示森林
-			var edges = [];	//	
-
-			//每个节点初始化成一棵树
-			for(var i=0;i<m;i++){
-				var set = new Set();
-				set.add(i);
-				treelist.push(set);
-			}
-			console.log(treelist);
-
-			// get each line
-			for(var i=0;i<n;i++){
-				edge = E[i];
-				var a = edge.node1;
-				var b = edge.node2;
-				var counta=-1;
-				var countb=-1;
-
-				//get the tree of a and b
-				for(var j=0;j<treelist.length;j++){
-					var set = treelist[j];
-					// var set = new Set();
-					if(set.has(a)){
-						counta=j;
-					}
-					if(set.has(b)){
-						countb=j;
-					}
-				}
-				//do not get the point
-				if(counta==-1||countb==-1){
-					return;
-				} else {
-					if(counta!=countb){
-						var set1=treelist[counta];
-						var set2=treelist[countb];
-						set2.forEach(function(item){
-							set1.add(item);	//	把b所在的树中的每一个节点都合并到a所在的树中
-						});
-						//Note that we will delete 2 sets continuously
-						if(counta<countb){
-							treelist.splice(counta,1);
-							treelist.splice(countb-1,1);
-						} else {
-							treelist.splice(countb,1);
-							treelist.splice(counta-1,1);
-						}
-						treelist.push(set1);	//	add the big set to treelist set.
-						edges.push(edge);	//	 add this edge to edges set.
-						console.log("边("+edge.node1+","+edge.node2+","+edge.weight+") 加入");
-					} else {
-						console.log("两点已经在同一棵树中");
-					}
-				}
-
-
-				
-			}
-			console.log(edges)
-			for(var i=0;i<edges.length;i++){
-					var edge = edges[i];
-					var a = edge.node1;
-					var b = edge.node2;
-					changeCircleColor(a,"red",i*1000,500);
-					changeCircleColor(b,"red",i*1000,500);
-					changeLineColor(a,b,"black",i*1000,500);
-			}
-
-
-		}
-
-
 
 function prim(index){
-			var nodes = [];
-			var edges = [];
-			var lowcost=[];
-			var mid =[];
+    var nodes = [];
+    var edges = [];
+    var lowcost=[];
+    var mid =[];
 
-			for(var i=0;i<node_num;i++){
-				lowcost[i]=adj2[index][i];	//	各个点距离初始点的距离
-				mid[i]=index;
-			}
-				
+    for(var i=0;i<node_num;i++){
+        lowcost[i]=adj2[index][i];	//	各个点距离初始点的距离
+        mid[i]=index;
+    }
+    console.log(lowcost)	
 
-			var min;
-			var minid;
-			var sum=0;
+    var min;
+    var minid;
+    var sum=0;
 
-			nodes.push(index);	//	加入的节点顺序
-			changeCircleColor(index,"red",0,500)
-			for(var i=1;i<node_num;i++){
-				min = 100;
-				minid=-1;
-				for(var j=0;j<node_num;j++){
-					if(lowcost[j]!=0&&lowcost[j]<min){
-						min = lowcost[j];
-						minid=j;
-					}
-				}
-				if(minid==-1){
-					console.log(i+"fail");
-					console.log(nodes);
-					return;
-				} 
+    nodes.push(index);	//	加入的节点顺序
+    console.log(nodes);
+    for(var i=1;i<node_num;i++){
+        min = 100;
+        minid=-1;
+        for(var j=0;j<node_num;j++){
+            if(lowcost[j]!=0&&lowcost[j]<min){
+                min = lowcost[j];
+                minid=j;
+            }
+        }
+        if(minid==-1){
+            console.log(i+"fail");
+            console.log(nodes);
+            return;
+        } 
 
-				nodes.push(minid);	//	把找到的这个点放入nodes数组
-
-				changeLineColor(mid[minid],minid,"black",1000*i,500);
-				changeCircleColor(minid,"red",1000*i,500);
-				
-				lowcost[minid]=0;
-				sum=sum+min;	//	总权重
-				console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
-				for(var j=0;j<node_num;j++){
-					if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
-						lowcost[j]=adj2[minid][j];
-						mid[j]=minid;
-					}
-				}
-			}
-			console.log(nodes);
-			console.log(mid);
-			for(var i=0;i<node_num;i++){
-				console.log(nodeName[mid[i]]+" "+nodeName[i])
-			}
-			
-		}
+        nodes.push(minid);	//	把找到的这个点放入nodes数组
+        lowcost[minid]=0;
+        sum=sum+min;	//	总权重
+        console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
+        for(var j=0;j<node_num;j++){
+            if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
+                lowcost[j]=adj2[minid][j];
+                mid[j]=minid;
+            }
+        }
+    }
+    console.log(nodes);
+    console.log(mid);
+    for(var i=0;i<node_num;i++){
+        console.log(nodeName[mid[i]]+" "+nodeName[i])
+    }
+}
 
 //执行广度优先遍历
 function BFS(index){
@@ -547,7 +391,11 @@ function DFS(index){
 		});
 }
 
-
+var node_color_end = "green";
+//var node_color = circleFill;
+//var line_color = 
+var line_visited = "red";
+var line_gone = "black";
 function dijstra(index){  
     //min dist
     var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
@@ -559,11 +407,6 @@ function dijstra(index){
             p[i] = index;
         }
     }
-    console.log(d3.selectAll("circle")[0])
-    console.log(d3.selectAll("circle")[0][index])
-    
-    changeLineColor(0,1,'green',100,1000);
-    changeCircleColor(index,"green",100,1000);
     d[index] = 0;
     
     for(var i=0;i<node_num;i++){     
@@ -572,42 +415,65 @@ function dijstra(index){
         }
     }
     
-    
-    var S = [index];
+    var S = [];
     var Q = [0,1,2,3,4,5,6,7,8,9];
-    Q.removeByValue(index);
+
+    var delay = 0;
+    var delay_interupt  = 300;
+    
 
     while(Q.length !=0){
+    
         /** min dequeue **/
         var minIndex = Q[0]; 
-        var i = 0;
-        for( ; i < node_num ; i++ ){
-            //element in Q  and cording dist is min          
-            if(Q.contains(i) && d[i] < d[minIndex]){
+        for(var i of Q ){//element in Q
+            // dist is min          
+            if(d[i] < d[minIndex]){
                 minIndex = i;
             }
         }
         Q.removeByValue(minIndex);
-        console.log(minIndex);
+        
+        
+        //////////////////// 
+        changeCircleColor(minIndex,node_color_end,delay,100);
+        delay = delay + delay_interupt;
         
         if(S.length==node_num){// end 
-            return 
+            return ;
         }
         
         /** set-or **/
         S = S.unique(S.push(minIndex));
+        if(S.length>1){
+            var lastElement = S[S.length-1];
+            console.log(lastElement);
+            changeLineColor(lastElement,p[lastElement],line_color_gone,delay-delay_interupt,100);
+            delay = delay + delay_interupt; 
+    
+        }
         
         /** for each v in adj[u] **/
         for(i=0 ; i<node_num ; i++){
-            if(adj[minIndex][i]!=0){//i is in adj
+            if(adj[minIndex][i]!=0 && Q.contains(i)){//i is in adj and  not visit
+            
+                //////////////////////////  判断当前点  ///////////////////////////////
+                
+                changeLineColor(minIndex,i,"green",delay,100);
+                delay = delay + delay_interupt;
+                
                 //relax
                 if(d[i]>d[minIndex]+adj[i][minIndex]){
                     d[i] = d[minIndex] + adj[i][minIndex];
                     p[i] = minIndex; 
-                    
                 }
+                changeLineColor(minIndex,i,line_visited,delay,100);
+                delay = delay + delay_interupt;
             }
         }
+        
+        
+        
     }
     console.log(d);
     console.log(p);
@@ -678,6 +544,10 @@ function dijstra1(index){
     Q.removeByValue(index);
 
     while(Q.length !=0){
+        
+        console.log(S);
+        
+        
         /** min dequeue **/
         var minIndex = Q[0]; 
         var i = 0;
