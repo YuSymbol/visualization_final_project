@@ -212,9 +212,155 @@ function onClick(index){
 		BFS(index);
 	}else if(text == 8){
         dijstra(index);
+    }else if(text == 4){
+        kruskal(index);
+    }else if(text == 5){
+        prim(index);
     }
 }
 
+//  获取边的对象：node1,node2,weight
+function getE(E){
+    // var E = []
+    for(var i=0;i<node_num;i++){
+
+        for(var j=0;j<node_num;j++){
+            if(adj[i][j]){
+                e={}
+                e.node1=i;
+                e.node2=j;
+                e.weight=adj[i][j];
+                E.push(e);
+                // E.push([i,j,adj[i][j]])
+            }
+        }
+    }
+    
+    // console.log(E);
+}
+
+//  获取边的对象，不重复
+function getE2(E){
+    // var E = []
+    for(var i=0;i<node_num;i++){
+
+        for(var j=i;j<node_num;j++){
+            if(adj[i][j]){
+                e={}
+                e.node1=i;
+                e.node2=j;
+                e.weight=adj[i][j];
+                E.push(e);
+                // E.push([i,j,adj[i][j]])
+            }
+        }
+    }
+    
+    // console.log(E);
+}
+
+var by = function(name){    //  对象排序方法
+ return function(o, p){
+   var a, b;
+   if (typeof o === "object" && typeof p === "object" && o && p) {
+     a = o[name];
+     b = p[name];
+     if (a === b) {
+       return 0;
+     }
+     if (typeof a === typeof b) {
+       return a < b ? -1 : 1;
+     }
+     return typeof a < typeof b ? -1 : 1;
+   }
+   else {
+     throw ("error");
+   }
+ }
+}
+
+function kruskal(index){
+    var E = [];
+    getE2(E);
+    console.log(E);
+
+    E.sort(by("weight"));   //  获得排序后的行
+
+    var m = node_num;
+    var n = E.length;
+    console.log(n);
+
+    var treelist = [];  //  创建一个Set类型的数组，每个Set表示一棵树，treelist表示森林
+    var edges = []; //  
+
+    //每个节点初始化成一棵树
+    for(var i=0;i<m;i++){
+        var set = new Set();
+        set.add(i);
+        treelist.push(set);
+    }
+    console.log(treelist);
+
+    // get each line
+    for(var i=0;i<n;i++){
+        edge = E[i];
+        var a = edge.node1;
+        var b = edge.node2;
+        var counta=-1;
+        var countb=-1;
+
+        //get the tree of a and b
+        for(var j=0;j<treelist.length;j++){
+            var set = treelist[j];
+            // var set = new Set();
+            if(set.has(a)){
+                counta=j;
+            }
+            if(set.has(b)){
+                countb=j;
+            }
+        }
+        //do not get the point
+        if(counta==-1||countb==-1){
+            return;
+        } else {
+            if(counta!=countb){
+                var set1=treelist[counta];
+                var set2=treelist[countb];
+                set2.forEach(function(item){
+                    set1.add(item); //  把b所在的树中的每一个节点都合并到a所在的树中
+                });
+                //Note that we will delete 2 sets continuously
+                if(counta<countb){
+                    treelist.splice(counta,1);
+                    treelist.splice(countb-1,1);
+                } else {
+                    treelist.splice(countb,1);
+                    treelist.splice(counta-1,1);
+                }
+                treelist.push(set1);    //  add the big set to treelist set.
+                edges.push(edge);   //   add this edge to edges set.
+                console.log("边("+edge.node1+","+edge.node2+","+edge.weight+") 加入");
+            } else {
+                console.log("两点已经在同一棵树中");
+            }
+        }
+
+
+        
+    }
+    console.log(edges)
+    for(var i=0;i<edges.length;i++){
+            var edge = edges[i];
+            var a = edge.node1;
+            var b = edge.node2;
+            changeCircleColor(a,"red",i*1000,500);
+            changeCircleColor(b,"red",i*1000,500);
+            changeLineColor(a,b,"black",i*1000,500);
+    }
+
+
+}
 
 function prim(index){
     var nodes = [];
