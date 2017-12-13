@@ -31,113 +31,47 @@ Array.prototype.removeByValue = function(val) {
 
 
 //生成画布        
-var width = 1800;
+var width = 900;
 var height = 540;
 var svg = d3.select("body").append("svg")
 	.attr("width",width)
 	.attr("height",height);
 
 //邻接矩阵
-// const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0],
-// 		   [8, 0, 9, 6, 7, 0, 0, 0, 0, 0],
-// 		   [0, 9, 0, 5, 0, 0, 0, 0, 0, 6],
-// 		   [0, 6, 5, 0, 9, 5, 0, 0, 0, 0],
-// 		   [6, 7, 0, 9, 0, 0, 4, 0, 0, 0],
-// 		   [0, 0, 0, 5, 0, 0, 3, 0, 3, 8],
-// 		   [0, 0, 0, 0, 4, 3, 0, 6, 9, 0],
-// 		   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0],
-// 		   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8],
-// 		   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0]];
+const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0],
+		   [8, 0, 9, 6, 7, 0, 0, 0, 0, 0],
+		   [0, 9, 0, 5, 0, 0, 0, 0, 0, 6],
+		   [0, 6, 5, 0, 9, 5, 0, 0, 0, 0],
+		   [6, 7, 0, 9, 0, 0, 4, 0, 0, 0],
+		   [0, 0, 0, 5, 0, 0, 3, 0, 3, 8],
+		   [0, 0, 0, 0, 4, 3, 0, 6, 9, 0],
+		   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0],
+		   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8],
+		   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0]];
 
-const adj =       [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [8, 0, 9, 6, 7, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 9, 0, 5, 0, 0, 0, 0, 0, 6,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 6, 5, 0, 9, 5, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [6, 7, 0, 9, 0, 0, 4, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 5, 0, 0, 3, 0, 3, 8,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 4, 3, 0, 6, 9, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0,   9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 9,   0, 7, 0, 0, 6, 0, 0, 8, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   7, 0, 6, 5, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 6, 0, 3, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 5, 3, 0, 0, 0, 1, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   6, 0, 0, 0, 0, 0, 4, 5, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 9, 2],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 4, 0, 0, 3, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   8, 0, 0, 0, 5, 0, 3, 0, 1, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 9, 0, 1, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 2, 0, 0, 0, 0]];
+var adj2 = [[0, 8, Infinity, Infinity, 6, Infinity, Infinity, 7, Infinity, Infinity],
+                   [8, 0, 9, 6, 7, Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6],
+                   [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity],
+                   [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8],
+                   [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity],
+                   [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8],
+                   [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0]];
 
-
-// var adj2 = [[0, 8, Infinity, Infinity, 6, Infinity, Infinity, 7, Infinity, Infinity],
-//                    [8, 0, 9, 6, 7, Infinity, Infinity, Infinity, Infinity, Infinity],
-//                    [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6],
-//                    [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity],
-//                    [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity],
-//                    [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8],
-//                    [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity],
-//                    [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity],
-//                    [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8],
-//                    [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0]];
-
-var adj2 =        [[0, 8, Infinity, Infinity, 6,    Infinity, Infinity, 7, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [8, 0, 9, 6, 7,  Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0,     9, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, 9, 0,7,Infinity,Infinity,6,    Infinity,Infinity,8,Infinity,Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  7,0,6,5,Infinity,    Infinity,Infinity,Infinity,Infinity,Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,6,0,3,Infinity,    Infinity,Infinity,Infinity,Infinity,Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,5,3,0,Infinity,    Infinity,1,Infinity,Infinity,Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  6,Infinity,Infinity,Infinity,0, Infinity,4,5,Infinity,Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   0,Infinity,Infinity,9,2],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,1,4, Infinity,0,3,Infinity,Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  8,Infinity,Infinity,Infinity,5,  Infinity,3,0,1,Infinity,],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   9,Infinity,1,0,Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   2,Infinity,Infinity,Infinity,0]];
-
-
-//十个的版本
-// const node_num =10;
-// var x1 = 200;
-// var x2 = 400;
-// var x3 = 500;
-// var x4 = 600;
-// var x5 = 800;
-
-// var y1 = 100;
-// var y2 = 200;
-// var y3 = 300;
-// var y4 = 400;
-// var y5 = 500;
-
-//二十个的版本
-const node_num = 20;
-
-var x1 = 100;
-var x2 = 300;
-var x3 = 400;
-var x4 = 500;
-var x5 = 700;
-var x6 = 800;
-var x7 = 1000;
-var x8 = 1100;
-var x9 = 1200;
-var x10 = 1400;
+const node_num = 10;
+var x1 = 200;
+var x2 = 400;
+var x3 = 500;
+var x4 = 600;
+var x5 = 800;
 
 var y1 = 100;
 var y2 = 200;
 var y3 = 300;
 var y4 = 400;
 var y5 = 500;
-
 
 var r = 25;
 var r2 = 30;
@@ -164,19 +98,11 @@ var line_opacity_hover = 1;
 
 
 //点的坐标（圆心坐标）
-// var coordinate = [{'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
-// 					{'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
-// 					{'cx':x4,'cy':y1},{'cx':x5,'cy':y3}];
-
 var coordinate = [{'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
-                 {'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
-                 {'cx':x4,'cy':y1},{'cx':x5,'cy':y3},
-                 {'cx':x6,'cy':y3},{'cx':x7,'cy':y5},{'cx':x9,'cy':y5},{'cx':x8,'cy':y4},
-                 {'cx':x7,'cy':y3},{'cx':x9,'cy':y3},{'cx':x8,'cy':y2},{'cx':x7,'cy':y1},
-                 {'cx':x9,'cy':y1},{'cx':x10,'cy':y3}];
+					{'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
+					{'cx':x4,'cy':y1},{'cx':x5,'cy':y3}];
 
-// var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "t"];
-var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "t"];
+var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "t"];
 
 //每个点处在的线
 var node_lines = new Array(adj.length);
@@ -296,12 +222,14 @@ function onClick(index){
 		DFS(index);
 	}else if(text ==2){
 		BFS(index);
-	}else if(text == 8){
-        dijstra(index);
-    }else if(text == 4){
+	}else if(text == 4){
         kruskal(index);
     }else if(text == 5){
         prim(index);
+    }else if(text == 7){
+        floyd();
+    }else if(text == 8){
+        dijstra(index);
     }
 }
 
@@ -370,7 +298,6 @@ function kruskal(index){
     getE2(E);
     console.log(E);
 
-    var time=0;
     E.sort(by("weight"));   //  获得排序后的行
 
     var m = node_num;
@@ -393,11 +320,6 @@ function kruskal(index){
         edge = E[i];
         var a = edge.node1;
         var b = edge.node2;
-
-        changeCircleColor(a,"red",1000*time,500);
-        changeCircleColor(b,"red",1000*time,500);
-        changeLineColor(a,b,"black",1000*time++,500);
-        
         var counta=-1;
         var countb=-1;
 
@@ -434,36 +356,26 @@ function kruskal(index){
                 edges.push(edge);   //   add this edge to edges set.
                 console.log("边("+edge.node1+","+edge.node2+","+edge.weight+") 加入");
             } else {
-                // changeCircleColor(a,circleFill,1000*time,500);
-                // changeCircleColor(b,circleFill,1000*time,500);
-                changeLineColor(a,b,line_color,1000*time++,500);
                 console.log("两点已经在同一棵树中");
             }
-        }
-        if(edges.length==node_num){
-            break;
         }
 
 
         
     }
     console.log(edges)
-    // for(var i=0;i<edges.length;i++){
-    //         var edge = edges[i];
-    //         var a = edge.node1;
-    //         var b = edge.node2;
-    //         changeCircleColor(a,"red",i*1000,500);
-    //         changeCircleColor(b,"red",i*1000,500);
-    //         changeLineColor(a,b,"black",i*1000,500);
-    // }
+    for(var i=0;i<edges.length;i++){
+            var edge = edges[i];
+            var a = edge.node1;
+            var b = edge.node2;
+            changeCircleColor(a,"red",i*1000,500);
+            changeCircleColor(b,"red",i*1000,500);
+            changeLineColor(a,b,"black",i*1000,500);
+    }
 
 
 }
 
-/*
-    边变灰、点变绿是搜索过程，搜索的是所有和当前点集合相连的边
-    最后这些边中其中一个变黑、一个点边红是搜索的结果
-*/
 function prim(index){
     var nodes = [];
     var edges = [];
@@ -480,28 +392,16 @@ function prim(index){
     var minid;
     var sum=0;
 
-    var time = 0;
     nodes.push(index);	//	加入的节点顺序
     console.log(nodes);
-    changeCircleColor(index, "red", 1000*time++, 500);  //  先把初始点颜色改变
-
+    changeCircleColor(index, "red", 0, 500);
     for(var i=1;i<node_num;i++){
         min = 100;
         minid=-1;
         for(var j=0;j<node_num;j++){
-
-            if(lowcost[j]!=0&&lowcost[j]<Infinity){
-                //  只要有边都要改一下
-                changeCircleColor(j, "green", 1000*time,500);
-                changeLineColor(mid[j], j, "gray", 1000*time++,500);
-                if(lowcost[j]<min){
-                    min = lowcost[j];
-                    minid=j;
-                } 
-                    changeCircleColor(j, circleFill, 1000*time,200);
-                    changeLineColor(mid[j], j, line_color, 1000*time++,200);
-                
-                
+            if(lowcost[j]!=0&&lowcost[j]<min){
+                min = lowcost[j];
+                minid=j;
             }
         }
         if(minid==-1){
@@ -514,8 +414,8 @@ function prim(index){
         lowcost[minid]=0;
         sum=sum+min;	//	总权重
         console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
-        changeCircleColor(minid,"red", 1000*time, 500);
-        changeLineColor(mid[minid], minid, "black", 1000*time++, 500);
+        changeCircleColor(minid,"red", 1000*i, 500);
+        changeLineColor(mid[minid], minid, "black", 1000*i, 500);
         for(var j=0;j<node_num;j++){
             if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
                 lowcost[j]=adj2[minid][j];
@@ -536,10 +436,10 @@ function BFS(index){
 		index : 开始的点
 	*/
 	
-	var color = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];			//0白色,1灰色,2黑色
-	var d = [10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10];	//深度,(让动画产生和层次相应的delay)
+	var color = [0,0,0,0,0,0,0,0,0,0];			//0白色,1灰色,2黑色
+	var d = [10,10,10,10,10,10,10,10,10,10];	//深度,(让动画产生和层次相应的delay)
 	var queue = [];								//保存灰色的点
-	var parent = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];//保存这个点的父节点
+	var parent = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];//保存这个点的父节点
 	//init paramaters
 	queue.push(index);
 	d[index] = 1;
@@ -599,10 +499,10 @@ function DFS(index){
 		index : 开始的点
 	*/
 	
-	var color = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];	//0白色,1灰色,2黑色
-	var d = [10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10];		//深度,(让动画产生和层次相应的delay)
+	var color = [0,0,0,0,0,0,0,0,0,0];	//0白色,1灰色,2黑色
+	var d = [10,10,10,10,10,10,10,10,10,10];		//深度,(让动画产生和层次相应的delay)
 	var time = 0;         //当前次序
-	var parent = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];//保存这个点的父节点
+	var parent = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];//保存这个点的父节点
 	
 	(function Dfs_visit(s){
 		color[s] = 1;
@@ -661,9 +561,9 @@ var line_visited = "red";
 var line_gone = "black";
 function dijstra(index){  
     //min dist
-    var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity,Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
+    var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
     //pre node
-    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
     for(var i = 0;i<node_num;i++){
         if(adj[index][i]!=0){
             d[i] = adj[index][i];
@@ -679,7 +579,7 @@ function dijstra(index){
     }
     
     var S = [];
-    var Q = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+    var Q = [0,1,2,3,4,5,6,7,8,9];
 
     var delay = 0;
     var delay_interupt  = 300;
@@ -785,7 +685,7 @@ function dijstra1(index){
     //min dist
     var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
     //pre node
-    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
     for(var i = 0;i<node_num;i++){
         if(adj[index][i]!=0){
             d[i] = adj[index][i];
@@ -803,7 +703,7 @@ function dijstra1(index){
     
     
     var S = [index];
-    var Q = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+    var Q = [0,1,2,3,4,5,6,7,8,9];
     Q.removeByValue(index);
 
     while(Q.length !=0){
@@ -846,4 +746,58 @@ function dijstra1(index){
     console.log(p);
 }
 
+
+var d = [[0, 8, Infinity, Infinity, 6, Infinity, Infinity, 7, Infinity, Infinity],
+           [8, 0, 9, 6, 7, Infinity, Infinity, Infinity, Infinity, Infinity],
+           [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6],
+           [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity],
+           [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity],
+           [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8],
+           [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity],
+           [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity],
+           [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8],
+           [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0]];
+
+var p =  [[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+		   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]];
+           
+var fdelay = 0;
+var fInter = 300;
+           
+function floyd(){
+    for(var k = 0 ;k<node_num;k++){
+        
+        for(var i= 0;i<node_num;i++){
+            for(var j = i+1;j<node_num;j++){
+                if(d[i][j]>d[i][k]+d[k][j]){
+                    d[i][j] = d[i][k]+d[k][j];
+                    d[j][i] = d[i][k]+d[k][j];
+                    
+                    p[i][j] = k;
+                    p[j][i] = k;
+                    
+                }
+            }
+        }
+    }
     
+    var res = "<pre>";
+    for(var i = 0;i<node_num;i++){
+        for(var j = 0;j<node_num;j++){
+            res = res + (d[i][j]+"\t");
+        }
+        res = res + "\n";
+    }
+    res = res + "</pre>";
+    $("#showText").append(res);
+    console.log(d);
+    console.log(p);
+}
