@@ -49,18 +49,40 @@ const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0],
 		   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8],
 		   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0]];
 
-var adj2 = [[0, 8, Infinity, Infinity, 6, Infinity, Infinity, 7, Infinity, Infinity],
-                   [8, 0, 9, 6, 7, Infinity, Infinity, Infinity, Infinity, Infinity],
-                   [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6],
-                   [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity],
-                   [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity],
-                   [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8],
-                   [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity],
-                   [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity],
-                   [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8],
-                   [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0]];
+// var adj2 = [[0, 8, Infinity, Infinity, 6, Infinity, Infinity, 7, Infinity, Infinity],
+//                    [8, 0, 9, 6, 7, Infinity, Infinity, Infinity, Infinity, Infinity],
+//                    [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6],
+//                    [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity],
+//                    [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity],
+//                    [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8],
+//                    [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity],
+//                    [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity],
+//                    [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8],
+//                    [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0]];
 
-const node_num = 10;
+var adj2 =        [[0, 8, Infinity, Infinity, 6,    Infinity, Infinity, 7, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [8, 0, 9, 6, 7,  Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0,     9, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, 9, 0,7,Infinity,Infinity,6,    Infinity,Infinity,8,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  7,0,6,5,Infinity,    Infinity,Infinity,Infinity,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,6,0,3,Infinity,    Infinity,Infinity,Infinity,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,5,3,0,Infinity,    Infinity,1,Infinity,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  6,Infinity,Infinity,Infinity,0, Infinity,4,5,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   0,Infinity,Infinity,9,2],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,1,4, Infinity,0,3,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  8,Infinity,Infinity,Infinity,5,  Infinity,3,0,1,Infinity,],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   9,Infinity,1,0,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   2,Infinity,Infinity,Infinity,0]];
+
+
+const node_num = 20;
 var x1 = 200;
 var x2 = 400;
 var x3 = 500;
@@ -360,7 +382,8 @@ function kruskal(index){
                 edges.push(edge);   //   add this edge to edges set.
                 console.log("边("+edge.node1+","+edge.node2+","+edge.weight+") 加入");
             } else {
-                
+                changeCircleColor(a,circleFill,1000*time,500);
+                changeCircleColor(b,circleFill,1000*time,500);
                 changeLineColor(a,b,line_color,1000*time++,500);
                 console.log("两点已经在同一棵树中");
             }
