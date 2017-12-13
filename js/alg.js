@@ -148,8 +148,12 @@ var r = 25;
 var r2 = 30;
 
 var circleStrokeWidth = 4.0;
-var circleStroke = "red";
-var circleFill = "royalblue";
+var circleStroke = "red"; //  初始描边
+var circleFill = "royalblue"; //  初始颜色
+
+var circleStart = "Maroon"; //  选中点的颜色
+var circleOther = "red";  //  其他点的颜色
+var circleTemp = "green"; //  过程点的颜色
 
 //文字相对圆心的偏离位置
 var circleTextXof = -5;
@@ -157,11 +161,14 @@ var circleTextYof = 8;
 
 //点之间连线的颜色
 var line_color  = "pink";
-var line_color_gone = "black";
+var line_color_gone = "black";  //  
+var line_color_temp = "gray"; //  过程边的颜色
 
 //连线的粗细
 var line_width = 6;
 var line_width_hover = 8;
+
+var line_width_change = 12;
 
 //线的透明度
 var line_opacity = .8;
@@ -399,9 +406,9 @@ function kruskal(index){
         var a = edge.node1;
         var b = edge.node2;
 
-        changeCircleColor(a,"red",delay2*time,dura2);
-        changeCircleColor(b,"red",delay2*time,dura2);
-        changeLineColor(a,b,"black",delay2*time++,dura2);
+        changeCircleColor(a,circleOther,delay2*time,dura2);
+        changeCircleColor(b,circleOther,delay2*time,dura2);
+        changeLineColor(a,b,line_color_gone,delay2*time++,dura2);
         
         var counta=-1;
         var countb=-1;
@@ -440,7 +447,7 @@ function kruskal(index){
             } else {
                 // changeCircleColor(a,circleFill,1000*time,500);
                 // changeCircleColor(b,circleFill,1000*time,500);
-                changeLineColor(a,b,line_color,delay2*time++,dura2);
+                changeLineColor(a,b,line_color,delay2*time++,dura2,true);
                 console.log("两点已经在同一棵树中");
             }
         }
@@ -487,7 +494,7 @@ function prim(index){
     var time = 0;
     nodes.push(index);	//	加入的节点顺序
     console.log(nodes);
-    changeCircleColor(index, "red", delay1*time++, dura1);  //  先把初始点颜色改变
+    changeCircleColor(index, circleStart, delay1*time++, dura1,true);  //  先把初始点颜色改变
 
     for(var i=1;i<node_num;i++){
         min = 100;
@@ -496,15 +503,15 @@ function prim(index){
 
             if(lowcost[j]!=0&&lowcost[j]<Infinity){
                 //  只要有边都要改一下
-                changeCircleColor(j, "green", delay1*time,dura1);
-                changeLineColor(mid[j], j, "gray", delay1*time++,dura1);
+                changeCircleColor(j, circleTemp, delay1*time,dura1);
+                changeLineColor(mid[j], j, line_color_temp, delay1*time++,dura1);
                 if(lowcost[j]<min){
                     min = lowcost[j];
                     minid=j;
                 } 
                 //  再给改回去
                 changeCircleColor(j, circleFill, delay1*time,dura1);
-                changeLineColor(mid[j], j, line_color, delay1*time++,dura1);
+                changeLineColor(mid[j], j, line_color, delay1*time++,dura1,true);
                 
                 
             }
@@ -519,8 +526,8 @@ function prim(index){
         lowcost[minid]=0;
         sum=sum+min;	//	总权重
         console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
-        changeCircleColor(minid,"red", delay1*time, dura1);
-        changeLineColor(mid[minid], minid, "black", delay1*time++, dura1);
+        changeCircleColor(minid,circleOther, delay1*time, dura1);
+        changeLineColor(mid[minid], minid, line_color_gone, delay1*time++, dura1);
         for(var j=0;j<node_num;j++){
             if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
                 lowcost[j]=adj2[minid][j];
@@ -659,10 +666,10 @@ function DFS(index){
 		});
 }
 
-var node_color_end = "green";
+var node_color_end = "red";
 //var node_color = circleFill;
 //var line_color = 
-var line_visited = "red";
+var line_visited = "grey";
 var line_gone = "black";
 function dijstra(index){  
     //min dist
@@ -747,21 +754,32 @@ function dijstra(index){
     console.log(p);
 }
 
-function changeCircleColor(index,c,delay_,duration_){
+function changeCircleColor(index,c,delay_,duration_,start){
     /**
     *   index:点的序号
     *   c:将变成的颜色
     *   delay_:延迟多少ms后，开始执行
     *   duration:动画执行的时间
     **/
+    
+
     d3.select(d3.selectAll("circle")[0][index])
         .transition()
         .delay(delay_)
         .duration(duration_)
         .attr("fill",c);
+
+    if(start==true){
+      d3.select(d3.selectAll("circle")[0][index])
+        .transition()
+        .delay(delay_)
+        .duration(duration_)
+        .attr("stroke",c)
+        .attr("fill", c);
+    }
 }
 
-function changeLineColor(i,j,c,delay_,duration_){
+function changeLineColor(i,j,c,delay_,duration_,reback){
     /**
     *   i:一个点的index
     *   j:另一个点的index
@@ -770,6 +788,11 @@ function changeLineColor(i,j,c,delay_,duration_){
     *   duration:动画执行的时间
     **/
     //点i所在的边 和 点j所在的边 的交集，（唯一），经由这条边到达
+    var line = line_width_change;
+    if(reback==true){
+      line = line_width;
+    }
+
     var i_node_lines = node_lines[i];
     var j_node_lines = node_lines[j];
     for(var cur_i of i_node_lines){
@@ -779,7 +802,8 @@ function changeLineColor(i,j,c,delay_,duration_){
                     .transition()
                     .delay(delay_)
                     .duration(duration_)
-                    .attr("stroke",c);
+                    .attr("stroke",c)
+                    .attr("stroke-width", line);
                 return;
             }
         }
