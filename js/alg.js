@@ -31,23 +31,45 @@ Array.prototype.removeByValue = function(val) {
 
 
 //生成画布        
-var width = 900;
+var width = 1800;
 var height = 540;
 var svg = d3.select("body").append("svg")
 	.attr("width",width)
 	.attr("height",height);
 
 //邻接矩阵
-const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0],
-		   [8, 0, 9, 6, 7, 0, 0, 0, 0, 0],
-		   [0, 9, 0, 5, 0, 0, 0, 0, 0, 6],
-		   [0, 6, 5, 0, 9, 5, 0, 0, 0, 0],
-		   [6, 7, 0, 9, 0, 0, 4, 0, 0, 0],
-		   [0, 0, 0, 5, 0, 0, 3, 0, 3, 8],
-		   [0, 0, 0, 0, 4, 3, 0, 6, 9, 0],
-		   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0],
-		   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8],
-		   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0]];
+// const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0],
+// 		   [8, 0, 9, 6, 7, 0, 0, 0, 0, 0],
+// 		   [0, 9, 0, 5, 0, 0, 0, 0, 0, 6],
+// 		   [0, 6, 5, 0, 9, 5, 0, 0, 0, 0],
+// 		   [6, 7, 0, 9, 0, 0, 4, 0, 0, 0],
+// 		   [0, 0, 0, 5, 0, 0, 3, 0, 3, 8],
+// 		   [0, 0, 0, 0, 4, 3, 0, 6, 9, 0],
+// 		   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0],
+// 		   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8],
+// 		   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0]];
+
+const adj =       [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [8, 0, 9, 6, 7, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 9, 0, 5, 0, 0, 0, 0, 0, 6,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 6, 5, 0, 9, 5, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [6, 7, 0, 9, 0, 0, 4, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 5, 0, 0, 3, 0, 3, 8,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 4, 3, 0, 6, 9, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0,   9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 9,   0, 7, 0, 0, 6, 0, 0, 8, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   7, 0, 6, 5, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 6, 0, 3, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 5, 3, 0, 0, 0, 1, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   6, 0, 0, 0, 0, 0, 4, 5, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 9, 2],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 4, 0, 0, 3, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   8, 0, 0, 0, 5, 0, 3, 0, 1, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 9, 0, 1, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 2, 0, 0, 0, 0]];
+
 
 // var adj2 = [[0, 8, Infinity, Infinity, 6, Infinity, Infinity, 7, Infinity, Infinity],
 //                    [8, 0, 9, 6, 7, Infinity, Infinity, Infinity, Infinity, Infinity],
@@ -82,18 +104,40 @@ var adj2 =        [[0, 8, Infinity, Infinity, 6,    Infinity, Infinity, 7, Infin
                    [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   2,Infinity,Infinity,Infinity,0]];
 
 
+//十个的版本
+// const node_num =10;
+// var x1 = 200;
+// var x2 = 400;
+// var x3 = 500;
+// var x4 = 600;
+// var x5 = 800;
+
+// var y1 = 100;
+// var y2 = 200;
+// var y3 = 300;
+// var y4 = 400;
+// var y5 = 500;
+
+//二十个的版本
 const node_num = 20;
-var x1 = 200;
-var x2 = 400;
-var x3 = 500;
-var x4 = 600;
-var x5 = 800;
+
+var x1 = 100;
+var x2 = 300;
+var x3 = 400;
+var x4 = 500;
+var x5 = 700;
+var x6 = 800;
+var x7 = 1000;
+var x8 = 1100;
+var x9 = 1200;
+var x10 = 1400;
 
 var y1 = 100;
 var y2 = 200;
 var y3 = 300;
 var y4 = 400;
 var y5 = 500;
+
 
 var r = 25;
 var r2 = 30;
@@ -120,11 +164,19 @@ var line_opacity_hover = 1;
 
 
 //点的坐标（圆心坐标）
-var coordinate = [{'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
-					{'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
-					{'cx':x4,'cy':y1},{'cx':x5,'cy':y3}];
+// var coordinate = [{'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
+// 					{'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
+// 					{'cx':x4,'cy':y1},{'cx':x5,'cy':y3}];
 
-var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "t"];
+var coordinate = [{'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
+                 {'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
+                 {'cx':x4,'cy':y1},{'cx':x5,'cy':y3},
+                 {'cx':x6,'cy':y3},{'cx':x7,'cy':y5},{'cx':x9,'cy':y5},{'cx':x8,'cy':y4},
+                 {'cx':x7,'cy':y3},{'cx':x9,'cy':y3},{'cx':x8,'cy':y2},{'cx':x7,'cy':y1},
+                 {'cx':x9,'cy':y1},{'cx':x10,'cy':y3}];
+
+// var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "t"];
+var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "t"];
 
 //每个点处在的线
 var node_lines = new Array(adj.length);
@@ -382,8 +434,8 @@ function kruskal(index){
                 edges.push(edge);   //   add this edge to edges set.
                 console.log("边("+edge.node1+","+edge.node2+","+edge.weight+") 加入");
             } else {
-                changeCircleColor(a,circleFill,1000*time,500);
-                changeCircleColor(b,circleFill,1000*time,500);
+                // changeCircleColor(a,circleFill,1000*time,500);
+                // changeCircleColor(b,circleFill,1000*time,500);
                 changeLineColor(a,b,line_color,1000*time++,500);
                 console.log("两点已经在同一棵树中");
             }
