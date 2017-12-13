@@ -296,6 +296,7 @@ function kruskal(index){
     getE2(E);
     console.log(E);
 
+    var time=0;
     E.sort(by("weight"));   //  获得排序后的行
 
     var m = node_num;
@@ -318,6 +319,11 @@ function kruskal(index){
         edge = E[i];
         var a = edge.node1;
         var b = edge.node2;
+
+        changeCircleColor(a,"red",1000*time,500);
+        changeCircleColor(b,"red",1000*time,500);
+        changeLineColor(a,b,"black",1000*time++,500);
+        
         var counta=-1;
         var countb=-1;
 
@@ -354,26 +360,35 @@ function kruskal(index){
                 edges.push(edge);   //   add this edge to edges set.
                 console.log("边("+edge.node1+","+edge.node2+","+edge.weight+") 加入");
             } else {
+                
+                changeLineColor(a,b,line_color,1000*time++,500);
                 console.log("两点已经在同一棵树中");
             }
+        }
+        if(edges.length==node_num){
+            break;
         }
 
 
         
     }
     console.log(edges)
-    for(var i=0;i<edges.length;i++){
-            var edge = edges[i];
-            var a = edge.node1;
-            var b = edge.node2;
-            changeCircleColor(a,"red",i*1000,500);
-            changeCircleColor(b,"red",i*1000,500);
-            changeLineColor(a,b,"black",i*1000,500);
-    }
+    // for(var i=0;i<edges.length;i++){
+    //         var edge = edges[i];
+    //         var a = edge.node1;
+    //         var b = edge.node2;
+    //         changeCircleColor(a,"red",i*1000,500);
+    //         changeCircleColor(b,"red",i*1000,500);
+    //         changeLineColor(a,b,"black",i*1000,500);
+    // }
 
 
 }
 
+/*
+    边变灰、点变绿是搜索过程，搜索的是所有和当前点集合相连的边
+    最后这些边中其中一个变黑、一个点边红是搜索的结果
+*/
 function prim(index){
     var nodes = [];
     var edges = [];
@@ -393,22 +408,24 @@ function prim(index){
     var time = 0;
     nodes.push(index);	//	加入的节点顺序
     console.log(nodes);
-    changeCircleColor(index, "red", 1000*time++, 500);
+    changeCircleColor(index, "red", 1000*time++, 500);  //  先把初始点颜色改变
+
     for(var i=1;i<node_num;i++){
         min = 100;
         minid=-1;
         for(var j=0;j<node_num;j++){
 
             if(lowcost[j]!=0&&lowcost[j]<Infinity){
+                //  只要有边都要改一下
                 changeCircleColor(j, "green", 1000*time,500);
                 changeLineColor(mid[j], j, "gray", 1000*time++,500);
                 if(lowcost[j]<min){
                     min = lowcost[j];
                     minid=j;
-                } else {
+                } 
                     changeCircleColor(j, circleFill, 1000*time,200);
                     changeLineColor(mid[j], j, line_color, 1000*time++,200);
-                }
+                
                 
             }
         }
