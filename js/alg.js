@@ -138,6 +138,11 @@ var y3 = 300;
 var y4 = 400;
 var y5 = 500;
 
+var delay1 = 300; //  时间间隔,for prim
+var dura1 = delay1/2; //  过度时间,for prim
+
+var delay2 = 500; //  for kruskal
+var dura2 = delay2/2; //  for kruskal
 
 var r = 25;
 var r2 = 30;
@@ -220,18 +225,18 @@ function init_graph(){
         var g = svg.append("g")
             .on("mouseover",function(){
                 //改变点的大小
-                d3.select(this)
-                    .select("circle")
-                    .transition()
-                    .duration(300)
-                    .attr("opacity",1)
-                    .attr("r",r2);
-                //改变文字"A"、"B"的大小
-                d3.select(this)
-                    .select("text")
-                    .transition()
-                    .duration(300)	
-                    .attr("font-size",25);
+                // d3.select(this)
+                //     .select("circle")
+                //     .transition()
+                //     .duration(300)
+                //     .attr("opacity",1)
+                //     .attr("r",r2);
+                // //改变文字"A"、"B"的大小
+                // d3.select(this)
+                //     .select("text")
+                //     .transition()
+                //     .duration(300)	
+                //     .attr("font-size",25);
                 //改变点连接到的线的粗细
                 /*
                 node_lines[index].forEach(function(element,index,array){
@@ -242,30 +247,30 @@ function init_graph(){
                 });
                 */
             })
-            .on("mouseout",function(){
-                //恢复点的颜色
-                d3.select(this)
-                    .select("circle")
-                    .transition()
-                    .duration(300)
-                    .attr("opacity",.9)
-                    .attr("r",r);
-                //恢复文字的大小
-                d3.select(this)
-                    .select("text")
-                    .transition()
-                    .duration(300)
-                    .attr("font-size",20);
-                /*
-                //恢复线的粗细
-                node_lines[index].forEach(function(element,index,array){
-                    element.transition()
-                    .duration(300)
-                    .attr("stroke-width",line_width)
-                    .attr("opacity",line_opacity);
-                });
-                */
-            })
+            // .on("mouseout",function(){
+            //     //恢复点的颜色
+            //     d3.select(this)
+            //         .select("circle")
+            //         .transition()
+            //         .duration(300)
+            //         .attr("opacity",.9)
+            //         .attr("r",r);
+            //     //恢复文字的大小
+            //     d3.select(this)
+            //         .select("text")
+            //         .transition()
+            //         .duration(300)
+            //         .attr("font-size",20);
+            //     /*
+            //     //恢复线的粗细
+            //     node_lines[index].forEach(function(element,index,array){
+            //         element.transition()
+            //         .duration(300)
+            //         .attr("stroke-width",line_width)
+            //         .attr("opacity",line_opacity);
+            //     });
+            //     */
+            // })
             .on("click",function (){onClick(index)});
         
         //绘制圆
@@ -394,9 +399,9 @@ function kruskal(index){
         var a = edge.node1;
         var b = edge.node2;
 
-        changeCircleColor(a,"red",1000*time,500);
-        changeCircleColor(b,"red",1000*time,500);
-        changeLineColor(a,b,"black",1000*time++,500);
+        changeCircleColor(a,"red",delay2*time,dura2);
+        changeCircleColor(b,"red",delay2*time,dura2);
+        changeLineColor(a,b,"black",delay2*time++,dura2);
         
         var counta=-1;
         var countb=-1;
@@ -404,7 +409,6 @@ function kruskal(index){
         //get the tree of a and b
         for(var j=0;j<treelist.length;j++){
             var set = treelist[j];
-            // var set = new Set();
             if(set.has(a)){
                 counta=j;
             }
@@ -436,7 +440,7 @@ function kruskal(index){
             } else {
                 // changeCircleColor(a,circleFill,1000*time,500);
                 // changeCircleColor(b,circleFill,1000*time,500);
-                changeLineColor(a,b,line_color,1000*time++,500);
+                changeLineColor(a,b,line_color,delay2*time++,dura2);
                 console.log("两点已经在同一棵树中");
             }
         }
@@ -483,7 +487,7 @@ function prim(index){
     var time = 0;
     nodes.push(index);	//	加入的节点顺序
     console.log(nodes);
-    changeCircleColor(index, "red", 1000*time++, 500);  //  先把初始点颜色改变
+    changeCircleColor(index, "red", delay1*time++, dura1);  //  先把初始点颜色改变
 
     for(var i=1;i<node_num;i++){
         min = 100;
@@ -492,14 +496,15 @@ function prim(index){
 
             if(lowcost[j]!=0&&lowcost[j]<Infinity){
                 //  只要有边都要改一下
-                changeCircleColor(j, "green", 1000*time,500);
-                changeLineColor(mid[j], j, "gray", 1000*time++,500);
+                changeCircleColor(j, "green", delay1*time,dura1);
+                changeLineColor(mid[j], j, "gray", delay1*time++,dura1);
                 if(lowcost[j]<min){
                     min = lowcost[j];
                     minid=j;
                 } 
-                    changeCircleColor(j, circleFill, 1000*time,200);
-                    changeLineColor(mid[j], j, line_color, 1000*time++,200);
+                //  再给改回去
+                changeCircleColor(j, circleFill, delay1*time,dura1);
+                changeLineColor(mid[j], j, line_color, delay1*time++,dura1);
                 
                 
             }
@@ -514,8 +519,8 @@ function prim(index){
         lowcost[minid]=0;
         sum=sum+min;	//	总权重
         console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
-        changeCircleColor(minid,"red", 1000*time, 500);
-        changeLineColor(mid[minid], minid, "black", 1000*time++, 500);
+        changeCircleColor(minid,"red", delay1*time, dura1);
+        changeLineColor(mid[minid], minid, "black", delay1*time++, dura1);
         for(var j=0;j<node_num;j++){
             if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
                 lowcost[j]=adj2[minid][j];
