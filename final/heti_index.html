@@ -164,6 +164,24 @@
         init_graph();
     });
 
+    $("ul.bullets").find("li").eq(1).click(
+        function(){
+           saveCamera();
+           clear_all();
+        }
+    )
+    $("ul.bullets").find("li").eq(2).click(
+        function(){
+           saveCamera();
+           clear_all();
+        }
+    )
+    
+    $("ul.bullets").find("li").eq(2).click(
+        function(){
+            init_threeD_graph();
+        }
+    )
     
 </script>
 

@@ -198,6 +198,7 @@ function init_graph(){
     d3.selectAll("line").remove();
     d3.selectAll("g").remove();
     d3.selectAll("text").remove();
+    
     for(var i=0;i<node_lines.length;i++){
         node_lines[i]=[];
     }
@@ -577,11 +578,7 @@ function BFS(index){
 			}
 			
 			//当前的圆,改变颜色
-			d3.select(element)
-				.transition()
-				.delay((d[ii]-1)*1500)
-				.duration(d[ii]==1?100:600)
-				.attr("fill",c);
+            changeCircleColor(ii,c,(d[ii]-1)*1500,d[ii]==1?100:600)
 			
 			//当前点的父节点有没有，没有->不可到达或者根节点
 			var paren = parent[ii];
