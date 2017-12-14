@@ -120,12 +120,12 @@ var splineMesh;
 var ssplines;
 
 var params = {
-    深度遍历: false,
-    广度遍历: false,
-    Prim生成树:false,
-    Kruskal生成树:false,
-    Dijkstra单源最短路径:false,
-    Floyd全局最短路径:false,
+    DFS: false,
+    BFS: false,
+    Prim:false,
+    Kruskal:false,
+    Dijkstra:false,
+    Floyd:false,
     SPFA:false,
     SPFA_SLF:false,
     SPFA_LLL:false
@@ -235,7 +235,7 @@ function init() {
     var gui = new dat.GUI();
     var flag = [1,1,1,1,1,1,1,1,1,1];
     
-    gui.add(params,'深度遍历').onChange(function(){
+    gui.add(params,'DFS').onChange(function(){
         if(flag[1]){
             DFS(1);
         }else{
@@ -244,7 +244,7 @@ function init() {
         }
         flag[1] = !flag[1];
     });
-    gui.add(params,'广度遍历').onChange(function(){
+    gui.add(params,'BFS').onChange(function(){
         if(flag[2]){
             BFS(1);
         }else{
@@ -253,7 +253,7 @@ function init() {
         }
         flag[2] = !flag[2];
     });
-    gui.add(params,'Kruskal生成树').onChange(function(){
+    gui.add(params,'Kruskal').onChange(function(){
         if(flag[3]){
             //prim(1);
             kruskal(1);
@@ -263,7 +263,7 @@ function init() {
         }
         flag[3] = !flag[3];
     });
-    gui.add( params, 'Prim生成树' ).onChange(function(){
+    gui.add( params, 'Prim' ).onChange(function(){
         if(flag[0]){
             prim(1);
         }else{
@@ -272,7 +272,7 @@ function init() {
         }
         flag[0] = !flag[0];
     });
-    gui.add(params,'Dijkstra单源最短路径').onChange(function(){
+    gui.add(params,'Dijkstra').onChange(function(){
         if(flag[4]){
             prim(1);
         }else{
@@ -281,7 +281,7 @@ function init() {
         }
         flag[4] = !flag[4];
     });
-    gui.add(params,'Floyd全局最短路径').onChange(function(){
+    gui.add(params,'Floyd').onChange(function(){
         if(flag[5]){
             dijstra(1);
         }else{
