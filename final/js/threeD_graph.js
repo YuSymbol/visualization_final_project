@@ -59,7 +59,7 @@ var circleStroke = "red"; //  初始描边
 var circleFill = "royalblue"; //  初始颜色
 
 var circleStart = "maroon"; //  选中点的颜色
-var circleOther = "red";  //  其他点的颜色
+var circleOther = "lightskyblue";  //  其他点的颜色
 var circleTemp = "green"; //  过程点的颜色
 
 //文字相对圆心的偏离位置
@@ -67,7 +67,7 @@ var circleTextXof = -5;
 var circleTextYof = 8;
 
 //点之间连线的颜色
-var line_color  = "lime";
+var line_color  = "orange";
 var line_color_gone = "black";  //  
 var line_color_temp = "gray"; //  过程边的颜色
 

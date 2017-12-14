@@ -26,19 +26,23 @@
     <script src="js/bootstrap.js" charset="utf-8"></script> 
     <script src="js/bootstrap-table.js" charset="utf-8"></script>  
     <script src="js/my_func.js" charset="utf-8"></script>  
+    <script src="js/variables.js"></script>
+
+
 
 
 
     <style>
         body{
-            background:pink;
+            background:lightskyblue;
         }
         #d2{
-            background:#AAA;
+            background:lavender ;
         }
         alg_ground{
             width:1000px;
             height:600px;
+            background:white;
         }
         g:hover{
             cursor:pointer;
@@ -61,7 +65,7 @@
       <div class="layer show">
             <div class="jumbotron">
                 <h1 style = "color:royalblue">Graph Algorithms Visualizaion</h1>
-                <div style = "color:pink;">
+                <div style = "color:lightskyblue;">
                     <p>DFS</p>
                     <p>BFS</p>
                     <p>Kruskal</p>
@@ -70,7 +74,7 @@
                     <p>Floyd</p>
 
                 </div>
-                <div>
+                <div style="margin-top:20px;margin-bottom:20px;">
                     <button class="button button-3d button-pill button-primary">2D</button>
                     <button class="button button-3d button-pill button-primary">3D</button>
                 </div>
@@ -78,10 +82,15 @@
             </div>
       </div>
       <div id="d2" class="layer">
-            <div id="test2"></div>
-            <input type="hidden" id="selectResult"></input>
-            <div id = "alg_ground"></div>
-            <div id = "showText"></div>
+            <div class="container">
+                <div id="test2" style="margin-top:5%;margin-bottom:2%"></div>
+                <input type="hidden" id="selectResult"></input>
+                
+            </div>
+            <div id = "alg_ground">
+
+                </div> 
+                <div id = "showText"></div>
       </div>
       <div id="d3" class="layer">
             <div id="container"></div>

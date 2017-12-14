@@ -1,8 +1,10 @@
+var init_graph;
+
 (function(){
     //生成画布        
     var width = 1500;
     var height = 600;
-    var svg = d3.select("body").select("#d2").append("svg")
+    var svg = d3.select("body").select("#alg_ground").append("svg")
         .attr("width",width)
         .attr("height",height);
     console.log(d3.select("body").select("#d2"));
@@ -53,17 +55,20 @@
 
     //二十个的版本
     const node_num = 20;
+    var x1 = 80;
+    var offset = x1;
 
-    var x1 = 40;
-    var x2 = 200;
-    var x3 = 300;
-    var x4 = 400;
-    var x5 = 600;
-    var x6 = 700;
-    var x7 = 900;
-    var x8 = 1000;
-    var x9 = 1100;
-    var x10 = 1300;
+    var x2 = 200+offset;
+    var x3 = 300+offset;
+    var x4 = 400+offset;
+    var x5 = 600+offset;
+    var x6 = 700+offset;
+    var x7 = 900+offset;
+    var x8 = 1000+offset;
+    var x9 = 1100+offset;
+    var x10 = 1300+offset;
+
+
 
     var y1 = 100;
     var y2 = 200;
@@ -81,12 +86,12 @@
     var r2 = 30;
 
     var circleStrokeWidth = 4.0;
-    var circleStroke = "red"; //  初始描边
+    var circleStroke = "pink"; //  初始描边
     var circleFill = "royalblue"; //  初始颜色
 
     var circleStart = "Maroon"; //  选中点的颜色
     var circleOther = "red";  //  其他点的颜色
-    var circleTemp = "green"; //  过程点的颜色
+    var circleTemp = "red"; //  过程点的颜色
 
     //文字相对圆心的偏离位置
     var circleTextXof = -5;
@@ -119,7 +124,7 @@
     //每个点处在的线
     var node_lines = new Array(adj.length);
 
-    function init_graph(){
+     init_graph = function(){
         d3.selectAll("circle").remove();
         d3.selectAll("line").remove();
         d3.selectAll("g").remove();
