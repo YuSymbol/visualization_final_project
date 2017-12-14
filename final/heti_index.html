@@ -56,7 +56,7 @@
 </head>
 <body>
     <article class="kontext">
-      <div class="layer">
+      <div class="layer show">
             <div class="jumbotron">
                 <h1>Graph Algorithms Visualizaion</h1>
                 <p>...</p>
@@ -150,6 +150,24 @@
         init_graph();
     });
 
+    $("ul.bullets").find("li").eq(1).click(
+        function(){
+           saveCamera();
+           clear_all();
+        }
+    )
+    $("ul.bullets").find("li").eq(2).click(
+        function(){
+           saveCamera();
+           clear_all();
+        }
+    )
+    
+    $("ul.bullets").find("li").eq(2).click(
+        function(){
+            init_threeD_graph();
+        }
+    )
     
 </script>
 

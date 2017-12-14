@@ -1,4 +1,4 @@
-(function(){
+
 var nodes = [];
 var node_lines = new Array(20);
 
@@ -127,9 +127,10 @@ var params = {
 
 var camera_posiotion = [];
 
-init();
-animate();
-
+function init_threeD_graph(){
+    init();
+    animate();
+}
 
 
 function stoper() {
@@ -138,19 +139,33 @@ function stoper() {
     })
     
 }
-
+var guishow = false;
     
-function init() {
-
+function clear_all(){
+    //saveCamera()
     for(var i=0;i<node_lines.length;i++){
         node_lines[i]=[];
     }
+    stoper();
     nodes = []
     ssplines = [];
     $("#container *").remove();
-    $("div.dg *").remove();
+    $("div.dg *").remove();    
+}
+
+function saveCamera(){
+    if(camera){
+        camera_posiotion[0] = camera.position.x
+        camera_posiotion[1] = camera.position.y
+        camera_posiotion[2] = camera.position.z
+    }
+}
+function init() {
+
+    clear_all();
+    
     container = document.getElementById( 'container' );
-    stoper()
+    
     
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 0xf0f0f0 );
@@ -205,81 +220,70 @@ function init() {
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.damping = 0.2;
     
-
-        var gui = new dat.GUI();
-        var flag = [1,1,1,1,1,1,1,1];
-        gui.add( params, 'prim生成树' ).onChange(function(){
-            if(flag[0]){
-                prim(1);
-            }else{
-                camera_posiotion[0] = camera.position.x
-                camera_posiotion[1] = camera.position.y
-                camera_posiotion[2] = camera.position.z
-                init()
-            }
-            flag[0] = !flag[0];
-        });
-        gui.add(params,'深度遍历').onChange(function(){
-            if(flag[1]){
-                DFS(1);
-            }else{
-                camera_posiotion[0] = camera.position.x
-                camera_posiotion[1] = camera.position.y
-                camera_posiotion[2] = camera.position.z
-                init()
-            }
-            flag[1] = !flag[1];
-        });
-        gui.add(params,'广度遍历').onChange(function(){
-            if(flag[2]){
-                BFS(1);
-            }else{
-                camera_posiotion[0] = camera.position.x
-                camera_posiotion[1] = camera.position.y
-                camera_posiotion[2] = camera.position.z
-                init()
-            }
-            flag[2] = !flag[2];
-        });
-        gui.add(params,'kruskal生成树').onChange(function(){
-            if(flag[3]){
-                //prim(1);
-                kruskal(1);
-            }else{
-                camera_posiotion[0] = camera.position.x
-                camera_posiotion[1] = camera.position.y
-                camera_posiotion[2] = camera.position.z
-                init()
-            }
-            flag[3] = !flag[3];
-        });
-        gui.add(params,'单元最短路径').onChange(function(){
-            if(flag[4]){
-                prim(1);
-            }else{
-                camera_posiotion[0] = camera.position.x
-                camera_posiotion[1] = camera.position.y
-                camera_posiotion[2] = camera.position.z
-                init()
-            }
-            flag[4] = !flag[4];
-        });
-        gui.add(params,'全局最短路径').onChange(function(){
-            if(flag[5]){
-                dijstra(1);
-            }else{
-                camera_posiotion[0] = camera.position.x
-                camera_posiotion[1] = camera.position.y
-                camera_posiotion[2] = camera.position.z
-                init()
-            }
-            flag[5] = !flag[5];
-        });
-        
-        
-
-        gui.close();
+    guishow = document.getElementById("d3").classList.contains("show");
     
+
+    var gui = new dat.GUI();
+    var flag = [1,1,1,1,1,1,1,1];
+    gui.add( params, 'prim生成树' ).onChange(function(){
+        if(flag[0]){
+            prim(1);
+        }else{
+            saveCamera()
+            init()
+        }
+        flag[0] = !flag[0];
+    });
+    gui.add(params,'深度遍历').onChange(function(){
+        if(flag[1]){
+            DFS(1);
+        }else{
+            saveCamera()
+            init()
+        }
+        flag[1] = !flag[1];
+    });
+    gui.add(params,'广度遍历').onChange(function(){
+        if(flag[2]){
+            BFS(1);
+        }else{
+            saveCamera()
+            init()
+        }
+        flag[2] = !flag[2];
+    });
+    gui.add(params,'kruskal生成树').onChange(function(){
+        if(flag[3]){
+            //prim(1);
+            kruskal(1);
+        }else{
+            saveCamera()
+            init()
+        }
+        flag[3] = !flag[3];
+    });
+    gui.add(params,'单元最短路径').onChange(function(){
+        if(flag[4]){
+            prim(1);
+        }else{
+            saveCamera()
+            init()
+        }
+        flag[4] = !flag[4];
+    });
+    gui.add(params,'全局最短路径').onChange(function(){
+        if(flag[5]){
+            dijstra(1);
+        }else{
+            saveCamera()
+            init()
+        }
+        flag[5] = !flag[5];
+    });
+    
+    
+
+    gui.open();
     
     transformControl = new THREE.TransformControls( camera, renderer.domElement );
     transformControl.addEventListener( 'change', render );
@@ -961,4 +965,3 @@ function dijstra(index){
     //console.log(d);
     //console.log(p);
 }
-})()
