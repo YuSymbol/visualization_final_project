@@ -15,6 +15,8 @@
     <link rel="stylesheet" type="text/css" href="css/multiselect.css"/>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="css/bootstrap-table.css"/>
+    <link rel="stylesheet" type="text/css" href="css/buttons.css"/>
+
 
 
  
@@ -56,11 +58,23 @@
 </head>
 <body>
     <article class="kontext">
-      <div class="layer">
+      <div class="layer show">
             <div class="jumbotron">
-                <h1>Graph Algorithms Visualizaion</h1>
-                <p>...</p>
-                <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+                <h1 style = "color:royalblue">Graph Algorithms Visualizaion</h1>
+                <div style = "color:pink;">
+                    <p>DFS</p>
+                    <p>BFS</p>
+                    <p>Kruskal</p>
+                    <p>Prim</p>
+                    <p>Dijkstra</p>
+                    <p>Floyd</p>
+
+                </div>
+                <div>
+                    <button class="button button-3d button-pill button-primary">2D</button>
+                    <button class="button button-3d button-pill button-primary">3D</button>
+                </div>
+                
             </div>
       </div>
       <div id="d2" class="layer">
@@ -138,7 +152,7 @@
                       {"colId":2,"colValue":"广度遍历"},
                       {"colId":3,"colValue":"(Kruskal)最小生成树"},
                       {"colId":4,"colValue":"(Prim)最小生成树"},
-                      {"colId":5,"colValue":"(dijstra)单源最短路径"},
+                      {"colId":5,"colValue":"(dijkstra)单源最短路径"},
                       {"colId":6,"colValue":"全局最短路径"}];
     $("#test2").multiselectInit({
         "selectData":selectData,

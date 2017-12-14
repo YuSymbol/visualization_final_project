@@ -119,10 +119,10 @@ var ssplines;
 var params = {
     深度遍历: false,
     广度遍历: false,
-    prim生成树:false,
-    kruskal生成树:false,
-    单元最短路径:false,
-    全局最短路径:false
+    Prim生成树:false,
+    Kruskal生成树:false,
+    Dijkstra单源最短路径:false,
+    Floyd全局最短路径:false
 };
 
 var camera_posiotion = [];
