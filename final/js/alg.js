@@ -70,11 +70,12 @@ var init_graph;
 
 
 
-    var y1 = 100;
-    var y2 = 200;
-    var y3 = 300;
-    var y4 = 400;
-    var y5 = 500;
+    var offsety = -50;
+    var y1 = 100+offsety;
+    var y2 = 200+offsety;
+    var y3 = 300+offsety;
+    var y4 = 400+offsety;
+    var y5 = 500+offsety;
 
     var delay1 = 300; //  时间间隔,for prim
     var dura1 = delay1/2; //  过度时间,for prim
@@ -97,9 +98,10 @@ var init_graph;
     var circleTextXof = -5;
     var circleTextYof = 8;
 
+    var textcolor = "white";
     //点之间连线的颜色
     var line_color  = "pink";
-    var line_color_gone = "black";  //  
+    var line_color_gone = "white";  //  
     var line_color_temp = "gray"; //  过程边的颜色
 
     //连线的粗细
@@ -156,7 +158,7 @@ var init_graph;
                         .attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
                         .attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
                         .text(adj[index][j])
-                        .attr("fill","black");
+                        .attr("fill",textcolor);
                 }
             }
             
@@ -179,7 +181,7 @@ var init_graph;
                 .attr("x", element.cx+circleTextXof)
                 .attr("y", element.cy+circleTextYof)
                 .text(nodeName[index])
-                .attr("fill","black")
+                .attr("fill",textcolor)
                 .attr("opacity",.9)
                 .attr("font-size",20);
         });
@@ -198,6 +200,12 @@ var init_graph;
             kruskal(index);
         }else if(text == 4){
             prim(index);
+        }else if(text ==7){
+            SPFA(index);
+        }else if(text ==8){
+            SPFA_SLF(index);
+        }else if(text ==9){
+            SPFA_LLL(index);
         }
     }
 
@@ -673,4 +681,179 @@ var init_graph;
             }
         }
     }
+
+
+function SPFA(index){
+    
+    var delay = 0;
+    var delay_interupt  = 300;
+    
+    
+    Q = []
+    d = [Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity]
+    //pre node
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    
+    Q.push(index);//向尾部加
+    d[index] = 0;
+    
+    while(Q.length!=0){
+        var now = Q.shift();//删掉头
+        changeCircleColor(now,node_color_end,delay,100);
+        delay = delay + delay_interupt;
+        
+        if(p[now]!=-1){
+            changeLineColor(now,p[now],line_color_gone,delay,100);
+            delay = delay + delay_interupt; 
+        }
+        
+        
+        for(var j=0;j<node_num;j++){
+            if(adj[now][j]){
+                if(d[j]>d[now]+adj[now][j]){
+                    d[j] = d[now] + adj[now][j] //relax
+                    if(p[j]!=-1){
+                        changeLineColor(j,p[j],line_color,delay,100);
+                        delay = delay + delay_interupt;
+                    }
+                    p[j] = now
+                    if(!Q.contains(j)){//不在Q中，加入Q中
+                        Q.push(j);
+                        changeLineColor(j,p[j],line_color_temp,delay,100);
+                        delay = delay + delay_interupt;
+                    }
+                }
+            }
+        }
+    }
+    console.log(d);
+    console.log(p);
+}
+
+function SPFA_SLF(index){
+    
+    var delay = 0;
+    var delay_interupt  = 300;
+    
+    var Q = []
+    var d = [Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity]
+    //pre node
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    
+    Q.push(index);//向尾部加
+    d[index] = 0;
+    
+    while(Q.length!=0){
+        var now = Q.shift();//删掉头
+        
+        changeCircleColor(now,node_color_end,delay,100);
+        delay = delay + delay_interupt;
+        
+        if(p[now]!=-1){
+            changeLineColor(now,p[now],line_color_gone,delay,100);
+            delay = delay + delay_interupt; 
+        }
+        
+        
+        for(var j=0;j<node_num;j++){
+            if(adj[now][j]){
+                if(d[j]>d[now]+adj[now][j]){
+                    d[j] = d[now] + adj[now][j] //relax
+                    
+                    if(p[j]!=-1){
+                        changeLineColor(j,p[j],line_color,delay,100);
+                        delay = delay + delay_interupt;
+                    }
+                    
+                    p[j] = now
+                    if(!Q.contains(j)){//不在Q中，加入Q中
+                    
+                        //small label first
+                        if(Q.length>0){
+                            
+                            if(d[j]<d[Q[0]]){
+                                Q.unshift(j)
+                            }else{
+                                Q.push(j);        
+                            }
+                        }else{
+                            Q.push(j);    
+                        }
+                        changeLineColor(j,p[j],line_color_temp,delay,100);
+                        delay = delay + delay_interupt;
+                        
+                    }
+                }
+            }
+        }
+    }
+    console.log(d);
+    console.log(p);
+}
+
+function SPFA_LLL(index){
+    var delay = 0;
+    var delay_interupt  = 300;
+    
+    var Q = []
+    var d = [Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity]
+    //pre node
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+
+    
+    Q.push(index);//向尾部加
+    d[index] = 0;
+    
+    while(Q.length!=0){
+        
+        
+        
+        var x_ = 0;//平均值
+        //var count_ = 0;//
+        for(var i of Q){
+            x_ = x_ + d[i];
+        }
+        x_ = x_ / Q.length;
+        var now;
+        while(true){
+            now = Q.shift();//删掉头
+            if(x_>d[now]){
+                Q.push(now);
+            }else{
+                changeCircleColor(now,node_color_end,delay,100);
+                delay = delay + delay_interupt;
+                if(p[now]!=-1){
+                    changeLineColor(now,p[now],line_color_gone,delay,100);
+                    delay = delay + delay_interupt; 
+                }
+                break;
+            }
+        }
+        
+        
+        for(var j=0;j<node_num;j++){
+            if(adj[now][j]){
+                if(d[j]>d[now]+adj[now][j]){
+                    d[j] = d[now] + adj[now][j] //relax
+                    
+                    
+                    if(p[j]!=-1){
+                        changeLineColor(j,p[j],line_color,delay,100);
+                        delay = delay + delay_interupt;
+                    }
+                    
+                    p[j] = now
+                    if(!Q.contains(j)){//不在Q中，加入Q中
+                        Q.push(j);    
+                        
+                        changeLineColor(j,p[j],line_color_temp,delay,100);
+                        delay = delay + delay_interupt;
+                    }
+                }
+            }
+        }
+    }
+    console.log(d);
+    console.log(p);
+}
 })()

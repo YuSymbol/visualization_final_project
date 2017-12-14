@@ -34,10 +34,10 @@
 
     <style>
         body{
-            background:lightskyblue;
+            background:black;
         }
         #d2{
-            background:lavender ;
+            background:black ;
         }
         alg_ground{
             width:1000px;
@@ -64,7 +64,7 @@
     <article class="kontext">
       <div class="layer show">
             <div class="jumbotron">
-                <h1 style = "color:royalblue">Graph Algorithms Visualizaion</h1>
+                <h1 style = "color:black">Graph Algorithms Visualizaion</h1>
                 <div style = "color:lightskyblue;">
                     <p>DFS</p>
                     <p>BFS</p>
@@ -83,7 +83,7 @@
       </div>
       <div id="d2" class="layer">
             <div class="container">
-                <div id="test2" style="margin-top:5%;margin-bottom:2%"></div>
+                <div id="test2" style="margin-top:5%;color:white;"></div>
                 <input type="hidden" id="selectResult"></input>
                 
             </div>
@@ -162,7 +162,10 @@
                       {"colId":3,"colValue":"(Kruskal)最小生成树"},
                       {"colId":4,"colValue":"(Prim)最小生成树"},
                       {"colId":5,"colValue":"(dijkstra)单源最短路径"},
-                      {"colId":6,"colValue":"全局最短路径"}];
+                      {"colId":6,"colValue":"全局最短路径"},
+                      {"colId":7,"colValue":"SPFA"},
+                      {"colId":8,"colValue":"SPFA-SLF"},
+                      {"colId":9,"colValue":"SPFA-LLL"}];
     $("#test2").multiselectInit({
         "selectData":selectData,
         "isMulti":false,//是否多选

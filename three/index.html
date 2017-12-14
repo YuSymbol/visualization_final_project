@@ -26,8 +26,9 @@
 	<body>
 
 		<div id="container"></div>
-		<div id="info"><a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - geometry - catmull spline editor</div>
-
+		<!--
+            <div id="info"><a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - geometry - catmull spline editor</div>
+        -->
 		<script src="js/three.js"></script>
 
 		<script src="js/controls/DragControls.js"></script>
@@ -38,7 +39,15 @@
 		<script src="js/libs/dat.gui.min.js"></script>
 
 		<script>
-            var std =  70;
+                     
+                
+                
+            var nodes = [];
+            var node_lines = new Array(20);
+            
+            
+            
+            var std =  50;
 			
             var x1 = -13*std;
 			var x2 = -9*std;
@@ -50,15 +59,12 @@
 			var x8 = 7*std;
 			var x9 = 9*std;
 			var x10 =13*std;
-
-            var y1 = -200;
-            var y2 = -100;
+            
+             var y1 = -4*std;
+            var y2 = -2*std;
             var y3 = 0;
-            var y4 = 100;
-            var y5 = 200;
-            
-            
-            
+            var y4 = 2*std;
+            var y5 = 4*std;
             
         
 			String.prototype.format = function () {
@@ -81,37 +87,45 @@
 			var positions = [];
 			var options;
 
-			var size = std;
+            var size = std;
 			var geometry = new THREE.BoxGeometry( size, size, size );
+            
+			//var geometry = new THREE.BoxGeometry( 20, 20, 20 );
 			var transformControl;
 
 			var ARC_SEGMENTS = 200;
 			var splineMesh;
 
-			var splines = {};
+			//  var splines = {};
+            var ssplines = [];
 
 			var params = {
 				uniform: false,
 				tension: 0.5,
 				centripetal: true,
 				chordal: false,
-				addPoint: addPoint,
-				removePoint: removePoint,
-				exportSpline: exportSpline
+				addPoint: null,
+				removePoint: null,
+				exportSpline: null
 			};
 
 			init();
 			animate();
 
 			function init() {
-
+                for(var i=0;i<node_lines.length;i++){
+                    node_lines[i]=[];
+                }
+            
+            
+            
 				container = document.getElementById( 'container' );
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xf0f0f0 );
 
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.set( 0, 250, 1000 );
+				camera.position.set( 300, 250, 450 );
 				scene.add( camera );
 
 				scene.add( new THREE.AmbientLight( 0xf0f0f0 ) );
@@ -125,14 +139,7 @@
 				scene.add( light );
 				spotlight = light;
 
-				var planeGeometry = new THREE.PlaneGeometry( 2000, 2000 );
-				planeGeometry.rotateX( - Math.PI / 2 );
-				var planeMaterial = new THREE.ShadowMaterial( { opacity: 0.2 } );
 
-				var plane = new THREE.Mesh( planeGeometry, planeMaterial );
-				plane.position.y = -200;
-				plane.receiveShadow = true;
-				scene.add( plane );
 
 				var helper = new THREE.GridHelper( 2000, 100 );
 				helper.position.y = - 199;
@@ -140,9 +147,7 @@
 				helper.material.transparent = true;
 				scene.add( helper );
 
-				//var axes = new THREE.AxesHelper( 1000 );
-				//axes.position.set( - 500, - 500, - 500 );
-				//scene.add( axes );
+
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -153,36 +158,12 @@
 				stats = new Stats();
 				container.appendChild( stats.dom );
 
-				var gui = new dat.GUI();
 
-				gui.add( params, 'uniform' );
-				gui.add( params, 'tension', 0, 1 ).step( 0.01 ).onChange( function( value ) {
-					splines.uniform.tension = value;
-					updateSplineOutline();
-				});
-				gui.add( params, 'centripetal' );
-				gui.add( params, 'chordal' );
-				//gui.add( params, 'addPoint' );
-				//gui.add( params, 'removePoint' );
-				//gui.add( params, 'exportSpline' );
-				gui.open();
 
 				// Controls
 				var controls = new THREE.OrbitControls( camera, renderer.domElement );
 				controls.damping = 0.2;
-				controls.addEventListener( 'change', render );
-
-				controls.addEventListener( 'start', function() {
-
-					cancelHideTransorm();
-
-				} );
-
-				controls.addEventListener( 'end', function() {
-
-					delayHideTransform();
-
-				} );
+				
 
 				transformControl = new THREE.TransformControls( camera, renderer.domElement );
 				transformControl.addEventListener( 'change', render );
@@ -207,26 +188,10 @@
 
 				} );
 
-				transformControl.addEventListener( 'objectChange', function( e ) {
 
-					updateSplineOutline();
-
-				} );
 
 				var dragcontrols = new THREE.DragControls( splineHelperObjects, camera, renderer.domElement ); //
 				dragcontrols.enabled = false;
-				dragcontrols.addEventListener( 'hoveron', function ( event ) {
-
-					transformControl.attach( event.object );
-					cancelHideTransorm();
-
-				} );
-
-				dragcontrols.addEventListener( 'hoveroff', function ( event ) {
-
-					delayHideTransform();
-
-				} );
 
 				var hiding;
 
@@ -272,98 +237,111 @@
 
 				}
 
-				var geometry = new THREE.Geometry();
+                
+                
+                const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [8, 0, 9, 6, 7, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 9, 0, 5, 0, 0, 0, 0, 0, 6,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 6, 5, 0, 9, 5, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [6, 7, 0, 9, 0, 0, 4, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 5, 0, 0, 3, 0, 3, 8,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 4, 3, 0, 6, 9, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [7, 0, 0, 0, 0, 0, 6, 0, 5, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 3, 9, 5, 0, 8,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 6, 0, 0, 8, 0, 0, 8, 0,   9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 9,   0, 7, 0, 0, 6, 0, 0, 8, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   7, 0, 6, 5, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 6, 0, 3, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 5, 3, 0, 0, 0, 1, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   6, 0, 0, 0, 0, 0, 4, 5, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 9, 2],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 4, 0, 0, 3, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   8, 0, 0, 0, 5, 0, 3, 0, 1, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 9, 0, 1, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 2, 0, 0, 0, 0]];
+               var vecs = [ new THREE.Vector3(x1,y3,0),
+							new THREE.Vector3(x2,y5,0),
+							new THREE.Vector3(x4,y5,0),
+							new THREE.Vector3(x3,y4,std*3),
+							new THREE.Vector3(x2,y3,-std*3),
 
-				for ( var i = 0; i < ARC_SEGMENTS; i ++ ) {
+							new THREE.Vector3(x4,y3,0),
+							new THREE.Vector3(x3,y2,0),
+							new THREE.Vector3(x2,y1,0),
+							new THREE.Vector3(x4,y1,0),
+							new THREE.Vector3(x5,y3,std*3),
 
-					geometry.vertices.push( new THREE.Vector3() );
+							new THREE.Vector3(x6,y3,-std*3),
+							new THREE.Vector3(x7,y5,0),
+							new THREE.Vector3(x9,y5,0),
+							new THREE.Vector3(x8,y4,0),
+							new THREE.Vector3(x7,y3,std*4),
+
+							new THREE.Vector3(x9,y3,-std),
+							new THREE.Vector3(x8,y2,0),
+							new THREE.Vector3(x7,y1,0),
+							new THREE.Vector3(x9,y1,0),
+							new THREE.Vector3(x10,y3,-std*4)
+                            ];             
+                
+                
+                
+                
+
+                for(var i = 0;i<20;i++){
+                    for(var j=i+1;j<20;j++){
+                        if(adj[i][j]!=0){
+                            //line nodes
+                            var geometry = new THREE.Geometry();
+                            geometry.vertices.push( vecs[i] );
+                            geometry.vertices.push( vecs[j] );
+
+                            
+                            //line curve
+                            var curve = new THREE.CatmullRomCurve3( positions );
+                            curve.curveType = 'centripetal';
+                            curve.mesh = new THREE.Line( geometry, new THREE.LineDashedMaterial( {
+                                color: 0x00ff00,
+                                opacity: 0.5,
+                                linewidth: 1000
+                                } ) );
+                            curve.mesh.castShadow = true;
+                            ssplines.push(curve);
+                            
+                            //add to node_lines
+                            node_lines[i].push(curve);
+                            node_lines[j].push(curve);
+                        }
+                    }
+                }
+
+                
+                //console.log(splines)
+                
+                
+				for ( var k of ssplines ) {
+
+					scene.add( k.mesh );
 
 				}
 
-				var curve = new THREE.CatmullRomCurve3( positions );
-				curve.curveType = 'catmullrom';
-				curve.mesh = new THREE.Line( geometry.clone(), new THREE.LineBasicMaterial( {
-					color: 0xff0000,
-					opacity: 0.35,
-					linewidth: 2
-					} ) );
-				curve.mesh.castShadow = true;
-				splines.uniform = curve;
 
-				curve = new THREE.CatmullRomCurve3( positions );
-				curve.curveType = 'centripetal';
-				curve.mesh = new THREE.Line( geometry.clone(), new THREE.LineBasicMaterial( {
-					color: "pink",
-					opacity: 1,
-					linewidth: 20
-					} ) );
-				curve.mesh.castShadow = true;
-				splines.centripetal = curve;
-
-				curve = new THREE.CatmullRomCurve3( positions );
-				curve.curveType = 'chordal';
-				curve.mesh = new THREE.Line( geometry.clone(), new THREE.LineBasicMaterial( {
-					color: 0x0000ff,
-					opacity: 0.35,
-					linewidth: 20
-					} ) );
-				curve.mesh.castShadow = true;
-				splines.chordal = curve;
-
-				for ( var k in splines ) {
-
-					var spline = splines[ k ];
-					scene.add( spline.mesh );
-
-				}
-
-				load( [ new THREE.Vector3(x1,y3,0),
-						new THREE.Vector3(x2,y5,0),
-						new THREE.Vector3(x4,y5,0),
-						new THREE.Vector3(x3,y4,100),
-						new THREE.Vector3(x2,y3,-100),
-						new THREE.Vector3(x4,y3,0),
-						new THREE.Vector3(x3,y2,0),
-						new THREE.Vector3(x2,y1,0),
-						new THREE.Vector3(x4,y1,0),
-						new THREE.Vector3(x5,y3,0),
-						new THREE.Vector3(x6,y3,0),
-						new THREE.Vector3(x7,y5,0),
-						new THREE.Vector3(x9,y5,0),
-						new THREE.Vector3(x8,y4,0),
-						new THREE.Vector3(x7,y3,0),
-						new THREE.Vector3(x9,y3,0),
-						new THREE.Vector3(x8,y2,0),
-						new THREE.Vector3(x7,y1,0),
-						new THREE.Vector3(x9,y1,0),
-						new THREE.Vector3(x10,y3,0)
-                            ] );
+                
+				load( vecs );
                             
-                            
-                            
-                       /*
-                       
-                    {'cx':x1,'cy':y3},{'cx':x2,'cy':y5},{'cx':x4,'cy':y5},{'cx':x3,'cy':y4},
-					{'cx':x2,'cy':y3},{'cx':x4,'cy':y3},{'cx':x3,'cy':y2},{'cx':x2,'cy':y1},
-					{'cx':x4,'cy':y1},{'cx':x5,'cy':y3}
-                       
-					   {'cx':x6,'cy':y3},{'cx':x7,'cy':y5},{'cx':x9,'cy':y5},{'cx':x8,'cy':y4},
-                 {'cx':x7,'cy':y3},{'cx':x9,'cy':y3},{'cx':x8,'cy':y2},{'cx':x7,'cy':y1},
-                 {'cx':x9,'cy':y1},{'cx':x10,'cy':y3}]
-                       */
-
 			}
+
 
 			function addSplineObject( position ) {
 
-				var material = new THREE.MeshLambertMaterial( { color: "royalblue" } );
+				var material = new THREE.MeshLambertMaterial( { color:"royalblue" } );
 				var object = new THREE.Mesh( geometry, material );
 
 				if ( position ) {
 
 					object.position.copy( position );
 
-				} else {	//	不存在位置的情况下，随机设置位置。
+				} else {
 
 					object.position.x = Math.random() * 1000 - 500;
 					object.position.y = Math.random() * 600;
@@ -373,6 +351,11 @@
 
 				object.castShadow = true;
 				object.receiveShadow = true;
+                
+                /************************************************************************************/
+                nodes.push(object);
+                /************************************************************************************/
+                
 				scene.add( object );
 				splineHelperObjects.push( object );
 				return object;
@@ -389,59 +372,11 @@
 
 			}
 
-			function removePoint() {
 
-				if ( splinePointsLength <= 4 ) {
 
-					return;
+			function updateSplineOutline() {}
 
-				}
-				splinePointsLength --;
-				positions.pop();
-				scene.remove( splineHelperObjects.pop() );
 
-				updateSplineOutline();
-
-			}
-
-			function updateSplineOutline() {
-
-				for ( var k in splines ) {
-
-					var spline = splines[ k ];
-
-					splineMesh = spline.mesh;
-
-					for ( var i = 0; i < ARC_SEGMENTS; i ++ ) {
-
-						var p = splineMesh.geometry.vertices[ i ];
-						var t = i /  ( ARC_SEGMENTS - 1 );
-						spline.getPoint( t, p );
-
-					}
-
-					splineMesh.geometry.verticesNeedUpdate = true;
-
-				}
-
-			}
-
-			function exportSpline() {
-
-				var strplace = [];
-
-				for ( var i = 0; i < splinePointsLength; i ++ ) {
-
-					var p = splineHelperObjects[ i ].position;
-					strplace.push( 'new THREE.Vector3({0}, {1}, {2})'.format( p.x, p.y, p.z ) )
-
-				}
-
-				console.log( strplace.join( ',\n' ) );
-				var code = '[' + ( strplace.join( ',\n\t' ) ) + ']';
-				prompt( 'copy and paste code', code );
-
-			}
 
 			function load( new_positions ) {
 
@@ -478,12 +413,205 @@
 
 			function render() {
 
-				splines.uniform.mesh.visible = params.uniform;
-				splines.centripetal.mesh.visible = params.centripetal;
-				splines.chordal.mesh.visible = params.chordal;
+				//splines.uniform.mesh.visible = params.uniform;
+				//splines.centripetal.mesh.visible = params.centripetal;
+				//splines.chordal.mesh.visible = params.chordal;
 				renderer.render( scene, camera );
 
 			}
+
+            
+            
+            function changeCircleColor(index,c,delay_,duration_){
+                /**
+                *   index:点的序号
+                *   c:将变成的颜色
+                *   delay_:延迟多少ms后，开始执行
+                *   duration:动画执行的时间
+                **/
+                
+                setTimeout ( function(){
+                    nodes[index].material.color.set(c);
+                } , delay_ );
+                
+            }
+            
+            //changeCircleColor(0,"red",3000,10);
+            //changeCircleColor(3,"red",5000,10);
+            //changeLineColor(0,1,"red",1000,10);
+            //changeLineColor(1,2,"black",4000,10);
+
+            function changeLineColor(i,j,c,delay_,duration_){
+                /**
+                *   i:一个点的index
+                *   j:另一个点的index
+                *   c:将变成的颜色
+                *   delay_:延迟多少ms后，开始执行
+                *   duration:动画执行的时间
+                **/
+                setTimeout ( function(){
+                    //点i所在的边 和 点j所在的边 的交集，（唯一），经由这条边到达
+                    var i_node_lines = node_lines[i];
+                    var j_node_lines = node_lines[j];
+                    for(var cur_i of i_node_lines){
+                        for(var pare_i of j_node_lines){
+                            if(cur_i === pare_i){
+                                cur_i.mesh.material.color.set(c);
+                                return;
+                            }
+                        }
+                    }
+                } , delay_ );
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+var adj2 =        [[0, 8, Infinity, Infinity, 6,    Infinity, Infinity, 7, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [8, 0, 9, 6, 7,  Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity,   Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, 9, 0, 5, Infinity, Infinity, Infinity, Infinity, Infinity, 6,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, 6, 5, 0, 9, 5, Infinity, Infinity, Infinity, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [6, 7, Infinity, 9, 0, Infinity, 4, Infinity, Infinity, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, 5, Infinity, 0, 3, Infinity, 3, 8,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, 4, 3, 0, 6, 9, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [7, Infinity, Infinity, Infinity, Infinity, Infinity, 6, 0, 5, Infinity,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity, 3, 9, 5, 0, 8,     Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, 6, Infinity, Infinity, 8, Infinity, Infinity, 8, 0,     9, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, 9, 0,7,Infinity,Infinity,6,    Infinity,Infinity,8,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  7,0,6,5,Infinity,    Infinity,Infinity,Infinity,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,6,0,3,Infinity,    Infinity,Infinity,Infinity,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,5,3,0,Infinity,    Infinity,1,Infinity,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  6,Infinity,Infinity,Infinity,0, Infinity,4,5,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   0,Infinity,Infinity,9,2],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,1,4, Infinity,0,3,Infinity,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  8,Infinity,Infinity,Infinity,5,  Infinity,3,0,1,Infinity,],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   9,Infinity,1,0,Infinity],
+                   [Infinity, Infinity, Infinity, Infinity, Infinity,    Infinity, Infinity, Infinity, Infinity, Infinity,  Infinity,Infinity,Infinity,Infinity,Infinity,   2,Infinity,Infinity,Infinity,0]];
+            
+            
+            
+            
+            
+  // var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "t"];
+var nodeName = ["s", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "t"];          
+            
+var node_num=20;            
+            
+prim(0);
+
+
+var delay1 = 600; //  时间间隔,for prim
+var dura1 = delay1/2; //  过度时间,for prim
+
+var delay2 = 500; //  for kruskal
+var dura2 = delay2/2; //  for kruskal
+
+var r = 25;
+var r2 = 30;
+
+var circleStrokeWidth = 4.0;
+var circleStroke = "red"; //  初始描边
+var circleFill = "royalblue"; //  初始颜色
+
+var circleStart = "Maroon"; //  选中点的颜色
+var circleOther = "red";  //  其他点的颜色
+var circleTemp = "green"; //  过程点的颜色
+
+//文字相对圆心的偏离位置
+var circleTextXof = -5;
+var circleTextYof = 8;
+
+//点之间连线的颜色
+var line_color  = "pink";
+var line_color_gone = "black";  //  
+var line_color_temp = "gray"; //  过程边的颜色
+
+//连线的粗细
+var line_width = 6;
+var line_width_hover = 8;
+
+var line_width_change = 12;
+
+//线的透明度
+var line_opacity = .8;
+var line_opacity_hover = 1;
+
+    
+/*
+    边变灰、点变绿是搜索过程，搜索的是所有和当前点集合相连的边
+    最后这些边中其中一个变黑、一个点边红是搜索的结果
+*/
+function prim(index){
+
+    var nodes = [];
+    var edges = [];
+    var lowcost=[];
+    var mid =[];
+
+    for(var i=0;i<node_num;i++){
+        lowcost[i]=adj2[index][i];	//	各个点距离初始点的距离
+        mid[i]=index;
+    }
+    //console.log(lowcost)	
+
+    var min;
+    var minid;
+    var sum=0;
+
+    var time = 1;
+    nodes.push(index);	//	加入的节点顺序
+    //console.log(nodes);
+    changeCircleColor(index, circleStart, delay1*time++, dura1);  //  先把初始点颜色改变
+
+    for(var i=1;i<node_num;i++){
+        min = 100;
+        minid=-1;
+        for(var j=0;j<node_num;j++){
+
+            if(lowcost[j]!=0&&lowcost[j]<Infinity){
+                //  只要有边都要改一下
+                changeCircleColor(j, circleTemp, delay1*time,dura1);
+                changeLineColor(mid[j], j, line_color_temp, delay1*time++,dura1);
+                if(lowcost[j]<min){
+                    min = lowcost[j];
+                    minid=j;
+                } 
+                //  再给改回去
+                changeCircleColor(j, circleFill, delay1*time,dura1);
+                changeLineColor(mid[j], j, line_color, delay1*time++,dura1);
+            }
+        }
+        if(minid==-1){
+            console.log(i+"fail");
+            console.log(nodes);
+            return;
+        } 
+
+        nodes.push(minid);	//	把找到的这个点放入nodes数组
+        lowcost[minid]=0;
+        sum=sum+min;	//	总权重
+        console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
+        changeCircleColor(minid,circleOther, delay1*time, dura1);
+        changeLineColor(mid[minid], minid, line_color_gone, delay1*time++, dura1);
+        for(var j=0;j<node_num;j++){
+            if(lowcost[j]!=0&&lowcost[j]>adj2[minid][j]){
+                lowcost[j]=adj2[minid][j];
+                mid[j]=minid;
+            }
+        }
+    }
+    console.log(nodes);
+    console.log(mid);
+    for(var i=0;i<node_num;i++){
+        console.log(nodeName[mid[i]]+" "+nodeName[i])
+    }
+}
 
 		</script>
 
