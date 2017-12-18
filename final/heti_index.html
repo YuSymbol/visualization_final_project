@@ -127,33 +127,7 @@
         }
     } );
 
-    document.addEventListener( 'keyup', function( event ) {
-        if( event.keyCode === 37 ) k.prev();
-        if( event.keyCode === 39 ) k.next();
-    }, false );
 
-    var touchX = 0;
-    var touchConsumed = false;
-
-    document.addEventListener( 'touchstart', function( event ) {
-        touchConsumed = false;
-        lastX = event.touches[0].clientX;
-    }, false );
-
-    document.addEventListener( 'touchmove', function( event ) {
-        event.preventDefault();
-
-        if( !touchConsumed ) {
-            if( event.touches[0].clientX > lastX + 10 ) {
-                k.prev();
-                touchConsumed = true;
-            }
-            else if( event.touches[0].clientX < lastX - 10 ) {
-                k.next();
-                touchConsumed = true;
-            }
-        }
-    }, false );
 
 
 
@@ -176,12 +150,16 @@
         init_graph();
     });
 
+    
+    
     $("ul.bullets").find("li").eq(0).click(
         function(){
            saveCamera();
            clear_all();
         }
     )
+    
+    
     $("ul.bullets").find("li").eq(1).click(
         function(){
            saveCamera();
@@ -214,6 +192,7 @@
     $("#btn_3d").click(function(){
 
         init_threeD_graph();
+        
         $("#layer_one").removeClass("show");
         $("#d3").addClass("show");
 

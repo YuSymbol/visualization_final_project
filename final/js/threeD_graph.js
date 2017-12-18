@@ -288,7 +288,7 @@ function init() {
     });
     gui.add(params,'Floyd').onChange(function(){
         if(flag[5]){
-            dijstra(1);
+            floyd();
         }else{
             saveCamera()
             init()
@@ -1187,4 +1187,66 @@ function SPFA_LLL(index){
     }
     console.log(d);
     console.log(p);
+}
+
+var color1 = "red";
+var color2 = "green";
+var color3 = "gold";
+function floyd(){
+    var delay = 0;
+    var delay_interupt  = 80;
+    
+    //min dist
+    var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
+    //pre node
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    //d[index] = 0;
+    
+    for(var k = 0 ;k<node_num;k++){
+        changeCircleColor(k,color1,delay,100);
+        delay = delay + delay_interupt;
+        
+        for(var i= 0;i<node_num;i++){
+            if(k==i)continue;
+            changeCircleColor(i,color2,delay,100);
+            delay = delay + delay_interupt;
+            
+            
+            for(var j = i+1;j<node_num;j++){
+                if(k==j) continue;
+                //if(i==j)continue;
+                changeCircleColor(j,color3,delay,100);
+                delay = delay + delay_interupt;
+                
+                if(d[i][j]>d[i][k]+d[k][j]){
+                    d[i][j] = d[i][k]+d[k][j];
+                    d[j][i] = d[i][k]+d[k][j];
+                    
+                    p[i][j] = k;
+                    p[j][i] = k;
+                    
+                }
+                
+                changeCircleColor(j,circleFill,delay,100);
+                delay = delay + delay_interupt;
+            }
+            changeCircleColor(i,circleFill,delay,100);
+            delay = delay + delay_interupt;
+        }
+        changeCircleColor(k,circleFill,delay,100);
+        delay = delay + delay_interupt;
+    }
+    /*
+    var res = "<pre>";
+    for(var i = 0;i<node_num;i++){
+        for(var j = 0;j<node_num;j++){
+            res = res + (d[i][j]+"\t");
+        }
+        res = res + "\n";
+    }
+    res = res + "</pre>";
+    $("#showText").append(res);
+    console.log(d);
+    console.log(p);
+    */
 }

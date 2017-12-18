@@ -7,7 +7,7 @@ var init_graph;
     var svg = d3.select("body").select("#alg_ground").append("svg")
         .attr("width",width)
         .attr("height",height);
-    console.log(d3.select("body").select("#d2"));
+    //console.log(d3.select("body").select("#d2"));
 
     const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                  [8, 0, 9, 6, 7, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -207,6 +207,9 @@ var init_graph;
             SPFA_SLF(index);
         }else if(text ==9){
             SPFA_LLL(index);
+        }else if(text ==6){
+            //SPFA_LLL(index);
+            floyd();
         }
     }
 
@@ -330,7 +333,7 @@ var init_graph;
                     }
                     treelist.push(set1);    //  add the big set to treelist set.
                     edges.push(edge);   //   add this edge to edges set.
-                    console.log("边("+edge.node1+","+edge.node2+","+edge.weight+") 加入");
+                    //console.log("边("+edge.node1+","+edge.node2+","+edge.weight+") 加入");
                 } else {
                     changeLineColor(a,b,line_color,delay2*time++,dura2,true);
                     //console.log("两点已经在同一棵树中");
@@ -356,7 +359,7 @@ var init_graph;
             lowcost[i]=adj2[index][i];	//	各个点距离初始点的距离
             mid[i]=index;
         }
-        console.log(lowcost)	
+        //console.log(lowcost)	
 
         var min;
         var minid;
@@ -364,7 +367,7 @@ var init_graph;
 
         var time = 0;
         nodes.push(index);	//	加入的节点顺序
-        console.log(nodes);
+        //console.log(nodes);
         changeCircleColor(index, circleStart, delay1*time++, dura1,true);  //  先把初始点颜色改变
 
         for(var i=1;i<node_num;i++){
@@ -396,7 +399,7 @@ var init_graph;
             nodes.push(minid);	//	把找到的这个点放入nodes数组
             lowcost[minid]=0;
             sum=sum+min;	//	总权重
-            console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
+            //console.log(nodeName[mid[minid]]+"到"+nodeName[minid]+"权值:"+min);
             changeCircleColor(minid,circleOther, delay1*time, dura1);
             changeLineColor(mid[minid], minid, line_color_gone, delay1*time++, dura1);
             for(var j=0;j<node_num;j++){
@@ -406,8 +409,8 @@ var init_graph;
                 }
             }
         }
-        console.log(nodes);
-        console.log(mid);
+        //console.log(nodes);
+        //console.log(mid);
         for(var i=0;i<node_num;i++){
             console.log(nodeName[mid[i]]+" "+nodeName[i])
         }
@@ -607,7 +610,7 @@ var init_graph;
             S = S.unique(S.push(minIndex));
             if(S.length>1){
                 var lastElement = S[S.length-1];
-                console.log(lastElement);
+                //console.log(lastElement);
                 changeLineColor(lastElement,p[lastElement],line_color_gone,delay-delay_interupt,100);
                 delay = delay + delay_interupt; 
         
@@ -635,8 +638,8 @@ var init_graph;
             
             
         }
-        console.log(d);
-        console.log(p);
+        //console.log(d);
+        //console.log(p);
     }
 
     function changeCircleColor(index,c,delay_,duration_,start){
@@ -760,8 +763,8 @@ function SPFA(index){
             }
         }
     }
-    console.log(d);
-    console.log(p);
+    //console.log(d);
+    //console.log(p);
 }
 
 function SPFA_SLF(index){
@@ -822,8 +825,8 @@ function SPFA_SLF(index){
             }
         }
     }
-    console.log(d);
-    console.log(p);
+    //console.log(d);
+    //console.log(p);
 }
 
 function SPFA_LLL(index){
@@ -890,7 +893,67 @@ function SPFA_LLL(index){
             }
         }
     }
+}
+var color1 = "red";
+var color2 = "green";
+var color3 = "gold";
+
+function floyd(){
+    var delay = 0;
+    var delay_interupt  = 80;
+    
+    //min dist
+    var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
+    //pre node
+    var p = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    //d[index] = 0;
+    
+    for(var k = 0 ;k<node_num;k++){
+        changeCircleColor(k,color1,delay,100);
+        delay = delay + delay_interupt;
+        
+        for(var i= 0;i<node_num;i++){
+            if(k==i)continue;
+            changeCircleColor(i,color2,delay,100);
+            delay = delay + delay_interupt;
+            
+            
+            for(var j = i+1;j<node_num;j++){
+                if(k==j) continue;
+                //if(i==j)continue;
+                changeCircleColor(j,color3,delay,100);
+                delay = delay + delay_interupt;
+                
+                if(d[i][j]>d[i][k]+d[k][j]){
+                    d[i][j] = d[i][k]+d[k][j];
+                    d[j][i] = d[i][k]+d[k][j];
+                    
+                    p[i][j] = k;
+                    p[j][i] = k;
+                    
+                }
+                
+                changeCircleColor(j,circleFill,delay,100);
+                delay = delay + delay_interupt;
+            }
+            changeCircleColor(i,circleFill,delay,100);
+            delay = delay + delay_interupt;
+        }
+        changeCircleColor(k,circleFill,delay,100);
+        delay = delay + delay_interupt;
+    }
+    /*
+    var res = "<pre>";
+    for(var i = 0;i<node_num;i++){
+        for(var j = 0;j<node_num;j++){
+            res = res + (d[i][j]+"\t");
+        }
+        res = res + "\n";
+    }
+    res = res + "</pre>";
+    $("#showText").append(res);
     console.log(d);
     console.log(p);
+    */
 }
 })()
