@@ -2,8 +2,8 @@ var init_graph;
 
 (function(){
     //生成画布        
-    var width = 1500;
-    var height = 600;
+    var width = $("#alg_ground").width();
+    var height = $("#alg_ground").height();
     var svg = d3.select("body").select("#alg_ground").append("svg")
         .attr("width",width)
         .attr("height",height);
