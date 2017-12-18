@@ -55,18 +55,33 @@ var init_graph;
 
     //二十个的版本
     const node_num = 20;
-    var x1 = 80;
-    var offset = x1;
 
-    var x2 = 200+offset;
-    var x3 = 300+offset;
-    var x4 = 400+offset;
-    var x5 = 600+offset;
-    var x6 = 700+offset;
-    var x7 = 900+offset;
-    var x8 = 1000+offset;
-    var x9 = 1100+offset;
-    var x10 = 1300+offset;
+    var colcount = 15;
+    var singlewid = width/colcount;
+
+
+    // var x1 = 80;
+    // var offset = x1;
+    var x1 = singlewid*1;
+
+    var x2 = singlewid*3;
+    var x3 = singlewid*4;
+    var x4 = singlewid*5;
+    var x5 = singlewid*7;
+    var x6 = singlewid*8;
+    var x7 = singlewid*10;
+    var x8 = singlewid*11;
+    var x9 = singlewid*12;
+    var x10 = singlewid*14;
+    // var x2 = 200+offset;
+    // var x3 = 300+offset;
+    // var x4 = 400+offset;
+    // var x5 = 600+offset;
+    // var x6 = 700+offset;
+    // var x7 = 900+offset;
+    // var x8 = 1000+offset;
+    // var x9 = 1100+offset;
+    // var x10 = 1300+offset;
 
 
 
