@@ -87,11 +87,11 @@ var init_graph;
     var r2 = 30;
 
     var circleStrokeWidth = 4.0;
-    var circleStroke = "pink"; //  初始描边
+    var circleStroke = "red"; //  初始描边
     var circleFill = "royalblue"; //  初始颜色
 
     var circleStart = "Maroon"; //  选中点的颜色
-    var circleOther = "red";  //  其他点的颜色
+    var circleOther = "pink";  //  其他点的颜色
     var circleTemp = "red"; //  过程点的颜色
 
     //文字相对圆心的偏离位置
@@ -99,10 +99,11 @@ var init_graph;
     var circleTextYof = 8;
 
     var textcolor = "white";
+    var textcolorend = "black";
     //点之间连线的颜色
-    var line_color  = "pink";
-    var line_color_gone = "white";  //  
-    var line_color_temp = "gray"; //  过程边的颜色
+    var line_color  = "darkgrey";
+    var line_color_gone = "red";  //  
+    var line_color_temp = "gold"; //  过程边的颜色
 
     //连线的粗细
     var line_width = 6;
@@ -438,14 +439,15 @@ var init_graph;
             }
             color[u] =2;
         }
-        
+        changeCircleColor(index,circleStart,0,500,true)
         //根据深度，delay，改变颜色
         d3.selectAll("circle")[0].forEach(function(element,ii){
-            var c = "black";
             if(color[ii] == 2){
-                c = "red";
+                c = circleOther;
             }
-            
+            if(ii==index){
+                return;
+            }
             //当前的圆,改变颜色
             changeCircleColor(ii,c,(d[ii]-1)*1500,d[ii]==1?100:600)
             
@@ -481,12 +483,16 @@ var init_graph;
             }
             color[s] =2;
         })(index);
+        changeCircleColor(index,circleStart,0,500,true)
 
         //根据深度，delay，改变颜色
         d3.selectAll("circle")[0].forEach(function(element,ii){
-            var c = "black";
+      
             if(color[ii] == 2){
-                c = "red";
+                c = circleOther;
+            }
+            if(ii==index){
+                return;
             }
             
             //当前的圆,改变颜色
@@ -543,6 +549,7 @@ var init_graph;
     //var line_color = 
     var line_visited = "grey";
     var line_gone = "black";
+
     function dijstra(index){  
         //min dist
         var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity,Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
@@ -583,7 +590,13 @@ var init_graph;
             
             
             //////////////////// 
-            changeCircleColor(minIndex,node_color_end,delay,100);
+            if(minIndex==index){
+                changeCircleColor(minIndex,circleStart,delay,100,true);
+
+            }else {
+                changeCircleColor(minIndex,circleOther,delay,100);
+
+            }
             delay = delay + delay_interupt;
             
             if(S.length==node_num){// end 
@@ -606,7 +619,7 @@ var init_graph;
                 
                     //////////////////////////  判断当前点  ///////////////////////////////
                     
-                    changeLineColor(minIndex,i,"green",delay,100);
+                    changeLineColor(minIndex,i,line_color_temp,delay,100);
                     delay = delay + delay_interupt;
                     
                     //relax
@@ -640,6 +653,12 @@ var init_graph;
             .delay(delay_)
             .duration(duration_)
             .attr("fill",c);
+         d3.select(d3.selectAll("g text")[0][index])
+            .transition()
+            .delay(delay_)
+            .duration(duration_)
+            .attr("fill",textcolorend);
+            
 
         if(start==true){
           d3.select(d3.selectAll("circle")[0][index])
@@ -648,6 +667,12 @@ var init_graph;
             .duration(duration_)
             .attr("stroke",c)
             .attr("fill", c);
+        
+         d3.select(d3.selectAll("g text")[0][index])
+            .transition()
+            .delay(delay_)
+            .duration(duration_)
+            .attr("fill",textcolor);
         }
     }
 
@@ -697,9 +722,18 @@ function SPFA(index){
     Q.push(index);//向尾部加
     d[index] = 0;
     
+    changeCircleColor(index, circleStart, delay, 100,true);
+
+
     while(Q.length!=0){
+
         var now = Q.shift();//删掉头
-        changeCircleColor(now,node_color_end,delay,100);
+        if(now!=index){
+            changeCircleColor(now,circleOther,delay,100);
+        } 
+
+       
+        
         delay = delay + delay_interupt;
         
         if(p[now]!=-1){
@@ -742,11 +776,12 @@ function SPFA_SLF(index){
     
     Q.push(index);//向尾部加
     d[index] = 0;
-    
+    changeCircleColor(index, circleStart, delay, 100,true);
+
     while(Q.length!=0){
         var now = Q.shift();//删掉头
-        
-        changeCircleColor(now,node_color_end,delay,100);
+        if(now!=index)
+            changeCircleColor(now,circleOther,delay,100);
         delay = delay + delay_interupt;
         
         if(p[now]!=-1){
@@ -803,7 +838,8 @@ function SPFA_LLL(index){
     
     Q.push(index);//向尾部加
     d[index] = 0;
-    
+    changeCircleColor(index, circleStart, delay, 100,true);
+
     while(Q.length!=0){
         
         
@@ -820,7 +856,8 @@ function SPFA_LLL(index){
             if(x_>d[now]){
                 Q.push(now);
             }else{
-                changeCircleColor(now,node_color_end,delay,100);
+                if(now!=index)
+                    changeCircleColor(now,circleOther,delay,100);
                 delay = delay + delay_interupt;
                 if(p[now]!=-1){
                     changeLineColor(now,p[now],line_color_gone,delay,100);

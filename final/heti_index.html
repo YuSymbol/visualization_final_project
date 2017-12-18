@@ -62,7 +62,7 @@
 </head>
 <body>
     <article class="kontext">
-      <div class="layer show">
+      <div id="layer_one" class="layer show">
             <div class="jumbotron">
                 <h1 style = "color:black">Graph Algorithms Visualizaion</h1>
                 <div style = "color:lightskyblue;">
@@ -75,8 +75,8 @@
 
                 </div>
                 <div style="margin-top:20px;margin-bottom:20px;">
-                    <button class="button button-3d button-pill button-primary">2D</button>
-                    <button class="button button-3d button-pill button-primary">3D</button>
+                    <button class="button button-3d button-pill button-primary" id="btn_2d">2D</button>
+                    <button class="button button-3d button-pill button-primary" id="btn_3d">3D</button>
                 </div>
                 
             </div>
@@ -176,13 +176,13 @@
         init_graph();
     });
 
-    $("ul.bullets").find("li").eq(1).click(
+    $("ul.bullets").find("li").eq(0).click(
         function(){
            saveCamera();
            clear_all();
         }
     )
-    $("ul.bullets").find("li").eq(2).click(
+    $("ul.bullets").find("li").eq(1).click(
         function(){
            saveCamera();
            clear_all();
@@ -194,6 +194,33 @@
             init_threeD_graph();
         }
     )
+
+    $("#btn_2d").click(function(){
+
+
+        saveCamera();
+        clear_all();
+
+        //init_threeD_graph();
+        $("#layer_one").removeClass("show");
+        $("#d2").addClass("show");
+
+        $("ul.bullets").find("li").eq(0).removeClass("active");
+        $("ul.bullets").find("li").eq(1).addClass("active");
+        //alert(0);
+
+    });
+
+    $("#btn_3d").click(function(){
+
+        init_threeD_graph();
+        $("#layer_one").removeClass("show");
+        $("#d3").addClass("show");
+
+        $("ul.bullets").find("li").eq(0).removeClass("active");
+        $("ul.bullets").find("li").eq(2).addClass("active");
+        //alert(0);
+    });
     
 </script>
 

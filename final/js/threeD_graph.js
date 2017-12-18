@@ -23,6 +23,10 @@ var y2 = -2*std;
 var y3 = 0;
 var y4 = 2*std;
 var y5 = 4*std;
+
+var camerax = 80;
+var cameray = 120;
+var cameraz = 220;
             
 const adj = [[0, 8, 0, 0, 6, 0, 0, 7, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [8, 0, 9, 6, 7, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -59,8 +63,8 @@ var circleStroke = "red"; //  初始描边
 var circleFill = "royalblue"; //  初始颜色
 
 var circleStart = "maroon"; //  选中点的颜色
-var circleOther = "lightskyblue";  //  其他点的颜色
-var circleTemp = "green"; //  过程点的颜色
+var circleOther = "pink";  //  /点的颜色
+var circleTemp = "lightseablue"; //  过程点的颜色
 
 var backgroundcolor = "black";
 var gridcolor = "white";
@@ -70,8 +74,9 @@ var circleTextXof = -5;
 var circleTextYof = 8;
 
 //点之间连线的颜色
-var line_color  = "orange";
-var line_color_gone = "white";  //  
+
+var line_color  = "white";
+var line_color_gone = "orange";  //  
 var line_color_temp = "gray"; //  过程边的颜色
 
 //连线的粗细
@@ -182,7 +187,7 @@ function init() {
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
     
     if(camera_posiotion.length<2){
-        camera.position.set( 0, 50, 250 );
+        camera.position.set( camerax, cameray, cameraz );
         //console.log(camera);
     }
     else {
@@ -434,7 +439,7 @@ function init() {
                 curve.curveType = 'centripetal';
                 curve.mesh = new THREE.Line( geometry, new THREE.LineDashedMaterial( {
                     color: line_color,
-                    opacity: 0.5,
+                    opacity: 1,
                     linewidth: 1000
                     } ) );
                 curve.mesh.castShadow = true;
@@ -851,12 +856,16 @@ function BFS(index){
 		}
 		color[u] =2;
 	}
+    changeCircleColor(index,circleStart,0,500)
 	//根据深度，delay，改变颜色
     nodes.forEach(function(element,ii){
-			var c = "black";
-			if(color[ii] == 2){
-				c = "red";
+			
+			if(color[ii] == 2&&ii!=index){
+				c = circleOther;
 			}
+            if(ii==index){
+                return;
+            }
 			
 			//当前的圆,改变颜色
             changeCircleColor(ii,c,(d[ii]-1)*1500,d[ii]==1?100:600)
@@ -895,12 +904,16 @@ function DFS(index){
 		color[s] =2;
 	})(index);
 
+    changeCircleColor(index,circleStart,0,500)
 	//根据深度，delay，改变颜色
     nodes.forEach(function(element,ii){
-			var c = "black";
-			if(color[ii] == 2){
-				c = "red";
+			
+			if(color[ii] == 2&&ii!=index){
+				c = circleOther;
 			}
+            if(ii==index){
+                return;
+            }
 			
 			//当前的圆,改变颜色
             changeCircleColor(ii,c,(d[ii]-1)*1500,d[ii]==1?100:600)
@@ -916,9 +929,7 @@ function DFS(index){
 
 
 
-var node_color_end = "red";
-var line_visited = "grey";
-var line_gone = "black";
+
 function dijstra(index){  
     //min dist
     var d = [ Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity,Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity,Infinity];
@@ -982,7 +993,7 @@ function dijstra(index){
             
                 //////////////////////////  判断当前点  ///////////////////////////////
                 
-                changeLineColor(minIndex,i,"green",delay,100);
+                changeLineColor(minIndex,i,line_color_temp,delay,100);
                 delay = delay + delay_interupt;
                 
                 //relax
@@ -990,7 +1001,7 @@ function dijstra(index){
                     d[i] = d[minIndex] + adj[i][minIndex];
                     p[i] = minIndex; 
                 }
-                changeLineColor(minIndex,i,line_visited,delay,100);
+                changeLineColor(minIndex,i,line_color_gone,delay,100);
                 delay = delay + delay_interupt;
             }
         }
