@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" type="text/css" href="css/iconfont.css"/>
+        <link rel="stylesheet" type="text/css" href="css/multiselect.css"/>
+     
+		<script src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/multiselect.js"></script>
+		<script src="js/d3.v3.min.js" charset="utf-8"></script>  
+		<style>
+			body{
+				background:#AAA;
+			}
+			alg_ground{
+				width:1000px;
+				height:600px;
+			}
+			g:hover{
+				cursor:pointer;
+			}
+		</style>
+
+    </head>
+    <body>
+        <div id="test2"></div>
+        <input type="hidden" id="selectResult" onpropertychange="javascript:alert('值已改变')></input>
+		<input type="text" id="sele"></input>
+		<div id = "alg_ground"></div>
+    </body>
+</html>
+<script type="text/javascript">
+	var selectData = [{"colId":1,"colValue":"深度遍历"},{"colId":2,"colValue":"广度遍历"},{"colId":3,"colValue":"(广度)生成树"},{"colId":4,"colValue":"(kruskal)最小生成树"},{"colId":5,"colValue":"(prim)最小生成树"},{"colId":6,"colValue":"(sollin)最小生成树"},{"colId":7,"colValue":"单源最短路径"},{"colId":8,"colValue":"全局最短路径"}];
+    $("#test2").multiselectInit({
+        "selectData":selectData,
+        "isMulti":false,//是否多选
+        "inputId":"selectResult",//输入框的id
+        "checkStyle":"fx"//选择的样式 fx , fg , yx
+    });
+
+	
+	$('#selectResult').bind('input propertychange', function() {  
+		alert(0)
+	});  
+	$('#sele').bind('input propertychange', function() {  
+		alert(0)
+	});  
+</script>
+<script src="js/alg.js"></script>

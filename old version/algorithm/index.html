@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	
+<head>
+    <meta charset="UTF-8">
+    <meta name="Keywords" content="关键词，关键字">
+    <meta name="Description" content="描述信息">
+    <title>1.绘制图</title>
+</head>
+<body>
+    <!-- 引入D3 -->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>  
+    <script type="text/javascript">
+		//生成画布        
+        var width = 800;
+        var height = 800;
+        var svg = d3.select("body").append("svg")
+            .attr("width",width)
+            .attr("height",height);
+		//邻接矩阵
+		var adj = [[0,1,1,1],
+				   [1,0,1,0],
+				   [1,1,0,0],
+				   [1,0,0,0]];
+		var coordinate = [{'cx':110,'cy':120},{'cx':350,'cy':120},{'cx':110,'cy':370},{'cx':350,'cy':370}];
+		//每个点处在的线
+		var node_lines = new Array(adj.length);
+		for(var i=0;i<node_lines.length;i++){
+			node_lines[i]=[];
+		}
+		coordinate.forEach(function(element,index,array){
+			//绘制线
+			for(var j = index+1;j<node_lines.length;j++){
+				if(adj[index][j]){
+					var line = svg.append("line")
+						.attr("x1",coordinate[index].cx)
+						.attr("x2",coordinate[j].cx)
+						.attr("y1",coordinate[index].cy)
+						.attr("y2",coordinate[j].cy)
+						.attr("stroke","blue");
+					//将线放到index和j节点的数组下
+					node_lines[index].push(line);
+					node_lines[j].push(line);
+					
+/*
+					//显示边的权重
+					svg.append("text")
+						.attr("x",(coordinate[index].cx+coordinate[j].cx)/2+(index-j)*6)
+						.attr("y",(coordinate[index].cy+coordinate[j].cy)/2+(index-j)*4)
+						.text(adj[index][j])
+						.attr("fill","black");
+*/
+				}
+			}
+			
+			//绘制点
+			var g = svg.append("g")
+				.on("mouseover",function(){
+					//改变点的颜色
+					d3.select(this)
+						.select("circle")
+						.transition()
+						.duration(300)
+						.attr("fill","red");
+					//改变文字的颜色
+					d3.select(this)
+						.select("text")
+						.transition()
+						.duration(300)
+						.attr("fill","red");
+					//改变点连接到的线的颜色
+					node_lines[index].forEach(function(element,index,array){
+						element.transition()
+						.duration(300)
+						.attr("stroke","red");
+					});
+				})
+				.on("mouseout",function(){
+					//恢复点的颜色
+					d3.select(this)
+						.select("circle")
+						.transition()
+						.duration(300)
+						.attr("fill","black");
+					//改变文字的颜色
+					d3.select(this)
+						.select("text")
+						.transition()
+						.duration(300)
+						.attr("fill","black");
+					//恢复线的颜色
+					node_lines[index].forEach(function(element,index,array){
+						element.transition()
+						.duration(300)
+						.attr("stroke","blue");
+					});
+				});
+			//绘制圆
+			g.append("circle")
+				.attr("cx", element.cx)
+				.attr("cy", element.cy)
+				.attr("r",8)
+				.attr("fill","black");
+			//绘制文字“node1”
+			g.append("text")
+				.attr("x", element.cx+10)
+				.attr("y", element.cy-10)
+				.text("node"+(index+1))
+				.attr("fill","black");
+		});
+	</script>
+</body>

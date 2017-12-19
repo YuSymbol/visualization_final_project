@@ -102,7 +102,7 @@ var init_graph;
     var r2 = 30;
 
     var circleStrokeWidth = 4.0;
-    var circleStroke = "red"; //  初始描边
+    var circleStroke = "royalblue"; //  初始描边
     var circleFill = "royalblue"; //  初始颜色
 
     var circleStart = "Maroon"; //  选中点的颜色
@@ -670,7 +670,8 @@ var init_graph;
             .transition()
             .delay(delay_)
             .duration(duration_)
-            .attr("fill",c);
+            .attr("fill",c)
+            .attr("stroke","red");
          d3.select(d3.selectAll("g text")[0][index])
             .transition()
             .delay(delay_)
